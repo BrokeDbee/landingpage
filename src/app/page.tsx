@@ -7,6 +7,7 @@ import TopBar from './components/TopBar';
 import Navigation from './components/Navigation';
 import NewsletterForm from './components/NewsletterForm';
 import MemoryGame from './components/MemoryGame';
+import PermitRequest from './components/PermitRequest';
 
 // Placeholder Image Component
 const PlaceholderImage = ({ title }: { title: string }) => (
@@ -548,6 +549,9 @@ export default function Home() {
 
       {/* Memory Game Section */}
       <MemoryGame />
+
+      {/* Permit Request Section */}
+      <PermitRequest />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
