@@ -217,6 +217,12 @@ export default function Home() {
                   position: "SRC Secretary",
                   image: "/placeholder.jpg",
                   description: "Managing SRC communications and documentation"
+                },
+                {
+                  name: "Rahim Daud",
+                  position: "IT Consultant",
+                  image: "/placeholder.jpg",
+                  description: "Managing digital infrastructure and technical solutions"
                 }
               ].map((executive, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition duration-300">
