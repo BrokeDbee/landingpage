@@ -124,7 +124,12 @@ export default function Navigation() {
                 >
                   <div className="flex items-center space-x-3">
                     <div className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl">
-                      <span className="text-lg font-bold text-white">K</span>
+                      <Image
+                        src="/manifest/android-chrome-512x512.png"
+                        alt="Knutsford University Logo"
+                        width={40}
+                        height={40}
+                      />
                     </div>
                     <div>
                       <h2 className="text-lg font-semibold text-white">
