@@ -10,6 +10,7 @@ import {
   MapPin,
   Heart,
 } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = {
   quickLinks: [
@@ -110,13 +111,13 @@ export default function Footer() {
                 className="mb-6"
               >
                 <div className="flex items-center space-x-3 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
-                    className="w-12 h-12 bg-gradient-to-br from-blue-400 to-orange-400 rounded-xl flex items-center justify-center"
-                  >
-                    <span className="text-white font-bold text-xl">K</span>
-                  </motion.div>
+                  <Image
+                    src="/manifest/android-chrome-512x512.png"
+                    alt="Knutsford University Logo"
+                    width={50}
+                    height={50}
+                    className=""
+                  />
                   <div>
                     <h3 className="text-2xl font-bold">
                       Knutsford University SRC

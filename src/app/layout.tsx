@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import Navigation from "@/components/layout/navigation";
+import Footer from "@/components/layout/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+          <Navigation />
+          <div className="mt-20">{children}</div>
+          <Footer />
+        </main>
         <Analytics />
       </body>
     </html>

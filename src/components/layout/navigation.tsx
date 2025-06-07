@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
+  ChevronDown,
   ChevronRight,
   Users,
   Calendar,
@@ -11,30 +12,178 @@ import {
   Phone,
   Home,
   Newspaper,
+  Heart,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-const navItems = [
-  { name: "Home", href: "#home", icon: Home },
-  { name: "News", href: "#news", icon: Newspaper },
-  { name: "Events", href: "#events", icon: Calendar },
-  { name: "Executives", href: "#executives", icon: Users },
-  { name: "Resources", href: "#resources", icon: FileText },
-  { name: "Contact", href: "#contact", icon: Phone },
+type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+type ItemType = {
+  name: string;
+  href?: string;
+  icon: IconType;
+  type?: "single" | "dropdown";
+  items?: ItemType[];
+};
+
+const navItems: ItemType[] = [
+  {
+    name: "Home",
+    href: "/",
+    icon: Home,
+    type: "single",
+  },
+  {
+    name: "About",
+    icon: Users,
+    type: "single",
+    href: "/about",
+  },
+  {
+    name: "News",
+    href: "/news",
+    icon: Newspaper,
+    type: "single",
+  },
+  {
+    name: "Events",
+    href: "/events",
+    icon: Calendar,
+    type: "single",
+  },
+  {
+    name: "Student Life",
+    icon: Heart,
+    type: "dropdown",
+    items: [
+      { name: "Services", href: "/services", icon: FileText },
+      { name: "Resources", href: "/resources", icon: BookOpen },
+      { name: "Get Involved", href: "/get-involved", icon: Users },
+    ],
+  },
+  {
+    name: "Contact",
+    icon: Phone,
+    href: "/contact",
+    type: "single",
+  },
 ];
 
-export default function Navigation() {
-  const [activeItem, setActiveItem] = useState("Home");
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+const DropdownMenu = ({
+  item,
+  setActiveItem,
+  isActive,
+}: {
+  item: ItemType;
+  setActiveItem: (name: ItemType) => void;
+  isActive: (name: ItemType) => boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
 
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <motion.button
+        whileHover={{ y: -2 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+          isActive(item) || isOpen
+            ? "text-blue-600 bg-blue-50"
+            : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+        }`}
+      >
+        {item.name}
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+          >
+            <div className="py-2">
+              {item.items?.map((subItem, index) => {
+                const IconComponent = subItem.icon;
+                return (
+                  <motion.a
+                    key={subItem.name}
+                    href={subItem.href}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{
+                      x: 4,
+                      backgroundColor: "rgba(59, 130, 246, 0.05)",
+                    }}
+                    onClick={() => {
+                      setActiveItem(subItem);
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+                  >
+                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-orange-600 text-white">
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium">{subItem.name}</span>
+                  </motion.a>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default function Navigation() {
+  const [activeItem, setActiveItem] = useState<ItemType>(navItems[0]);
+  const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(
+    null
+  );
+
+  const isActive = (item: ItemType) => {
+    // Check direct link match including special case for "Home" pointing to "/"
+    if (
+      item.href &&
+      (pathname === item.href || (item.name === "Home" && pathname === "/"))
+    ) {
+      return true;
+    }
+    // If the item has sub-links, return true if any of them match the current pathname
+    if (item.items) {
+      return item.items.some(
+        (subItem) =>
+          (subItem.href &&
+            (pathname === subItem.href ||
+              (subItem.name === "Home" && pathname === "/"))) ||
+          (activeItem.href && activeItem.href === subItem.href)
+      );
+    }
+    return false;
+  };
   return (
     <nav
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500 bg-white/95`}
     >
       <div className="container px-4 mx-auto border-b border-gray-200 backdrop-blur-md">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -43,7 +192,7 @@ export default function Navigation() {
             <motion.div
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.8 }}
-              className="flex items-center justify-center w-12 h-12  rounded-xl"
+              className="flex items-center justify-center w-12 h-12 rounded-xl"
             >
               <Image
                 src="/manifest/android-chrome-512x512.png"
@@ -54,41 +203,56 @@ export default function Navigation() {
               />
             </motion.div>
             <div className="hidden text-left xl:block">
-              <h1 className="font-bold text-transparent text-md bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text">
+              <h1 className="font-bold text-lg text-transparent bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text">
                 Knutsford University
               </h1>
-              <p className="text-xs text-gray-600">
+              <p className="text-sm text-gray-600">
                 Student Representative Council
               </p>
             </div>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="items-center hidden space-x-8 lg:flex">
+          <div className="items-center hidden space-x-2 lg:flex">
             {navItems.map((item, index) => (
-              <motion.a
+              <motion.div
                 key={item.name}
-                href={item.href}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
-                whileHover={{ y: -2 }}
-                onClick={() => setActiveItem(item.name)}
-                className={`relative px-4 py-2 rounded-lg transition-all duration-300 ${
-                  activeItem === item.name
-                    ? "text-blue-600 bg-blue-50"
-                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-                }`}
               >
-                {item.name}
-                {activeItem === item.name && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-blue-100 rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                {item.type === "single" ? (
+                  <motion.a
+                    href={item.href}
+                    whileHover={{ y: -2 }}
+                    onClick={() => setActiveItem(item)}
+                    className={`relative px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
+                      isActive(item)
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                    }`}
+                  >
+                    {item.name}
+                    {isActive(item) && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-blue-100 rounded-lg -z-10"
+                        transition={{
+                          type: "spring",
+                          bounce: 0.2,
+                          duration: 0.6,
+                        }}
+                      />
+                    )}
+                  </motion.a>
+                ) : (
+                  <DropdownMenu
+                    item={item}
+                    setActiveItem={setActiveItem}
+                    isActive={isActive}
                   />
                 )}
-              </motion.a>
+              </motion.div>
             ))}
           </div>
 
@@ -99,7 +263,7 @@ export default function Navigation() {
             transition={{ delay: 0.4 }}
             className="hidden lg:block"
           >
-            <Button className="px-6 py-2 text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 hover:shadow-xl">
+            <Button className="px-6 py-2 text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 hover:shadow-xl hover:scale-105">
               Get Involved
             </Button>
           </motion.div>
@@ -116,25 +280,20 @@ export default function Navigation() {
               className="w-full p-0 sm:w-80 bg-gradient-to-br from-slate-50 to-blue-50/30"
             >
               {/* Header */}
-              <div className="relative p-6 bg-gradient-to-r from-blue-600 to-orange-600">
+              <div className="relative p-6 bg-gradient-to-r from-blue-600 to-orange-600 overflow-hidden">
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between"
+                  className="relative z-10"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl">
-                      <Image
-                        src="/manifest/android-chrome-512x512.png"
-                        alt="Knutsford University Logo"
-                        width={40}
-                        height={40}
-                      />
+                    <div className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl">
+                      <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                        <span className="text-blue-600 font-bold">KU</span>
+                      </div>
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-white">
-                        KU SRC
-                      </h2>
+                      <h2 className="text-xl font-bold text-white">KU SRC</h2>
                       <p className="text-sm text-blue-100">Student Council</p>
                     </div>
                   </div>
@@ -146,56 +305,125 @@ export default function Navigation() {
               </div>
 
               {/* Navigation Items */}
-              <div className="px-6 py-8 overflow-auto">
-                <div className="space-y-2">
+              <div className="px-6 py-8 overflow-auto max-h-[calc(100vh-200px)]">
+                <div className="space-y-3">
                   {navItems.map((item, index) => {
                     const IconComponent = item.icon;
-                    return (
-                      <motion.a
-                        key={item.name}
-                        href={item.href}
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay: 0.1 * index,
-                          type: "spring",
-                          stiffness: 100,
-                        }}
-                        whileHover={{ x: 8, scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          setActiveItem(item.name);
-                          setIsSheetOpen(false);
-                        }}
-                        className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
-                          activeItem === item.name
-                            ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg"
-                            : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 hover:shadow-md"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div
-                            className={`p-2 rounded-lg transition-colors ${
-                              activeItem === item.name
-                                ? "bg-white/20"
-                                : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110"
-                            }`}
-                          >
-                            <IconComponent className="w-5 h-5" />
-                          </div>
-                          <span className="text-lg font-medium">
-                            {item.name}
-                          </span>
-                        </div>
-                        <ChevronRight
-                          className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${
-                            activeItem === item.name
-                              ? "text-white/80"
-                              : "text-gray-400"
+
+                    if (item.type === "single") {
+                      return (
+                        <motion.a
+                          key={item.name}
+                          href={item.href}
+                          initial={{ opacity: 0, x: 50 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          whileHover={{ x: 8, scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setActiveItem(item);
+                            setIsSheetOpen(false);
+                          }}
+                          className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
+                            isActive(item)
+                              ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg"
+                              : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 hover:shadow-md"
                           }`}
-                        />
-                      </motion.a>
-                    );
+                        >
+                          <div className="flex items-center space-x-4">
+                            <div
+                              className={`p-2 rounded-lg transition-all duration-300 ${
+                                isActive(item)
+                                  ? "bg-white/20"
+                                  : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110"
+                              }`}
+                            >
+                              <IconComponent className="w-5 h-5" />
+                            </div>
+                            <span className="text-lg font-medium">
+                              {item.name}
+                            </span>
+                          </div>
+                          <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                        </motion.a>
+                      );
+                    } else {
+                      return (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: 50 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          className="space-y-2"
+                        >
+                          <motion.button
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              setOpenMobileDropdown(
+                                openMobileDropdown === item.name
+                                  ? null
+                                  : item.name
+                              );
+                            }}
+                            className="group w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 hover:shadow-md"
+                          >
+                            <div className="flex items-center space-x-4">
+                              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110 transition-transform">
+                                <IconComponent className="w-5 h-5" />
+                              </div>
+                              <span className="text-lg font-medium">
+                                {item.name}
+                              </span>
+                            </div>
+                            <ChevronDown
+                              className={`w-5 h-5 transition-transform ${
+                                openMobileDropdown === item.name
+                                  ? "rotate-180"
+                                  : ""
+                              }`}
+                            />
+                          </motion.button>
+
+                          <AnimatePresence>
+                            {openMobileDropdown === item.name && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="ml-4 space-y-2 overflow-hidden"
+                              >
+                                {item.items?.map((subItem, subIndex) => {
+                                  const SubIconComponent = subItem.icon;
+                                  return (
+                                    <motion.a
+                                      key={subItem.name}
+                                      href={subItem.href}
+                                      initial={{ opacity: 0, x: 20 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: subIndex * 0.05 }}
+                                      whileHover={{ x: 4 }}
+                                      onClick={() => {
+                                        setActiveItem(subItem);
+                                        setIsSheetOpen(false);
+                                      }}
+                                      className="flex items-center space-x-3 p-3 rounded-lg bg-white/40 backdrop-blur-sm text-gray-600 hover:text-blue-600 hover:bg-white/60 transition-all duration-200"
+                                    >
+                                      <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-400 to-orange-500 text-white">
+                                        <SubIconComponent className="w-4 h-4" />
+                                      </div>
+                                      <span className="font-medium">
+                                        {subItem.name}
+                                      </span>
+                                    </motion.a>
+                                  );
+                                })}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    }
                   })}
                 </div>
 
@@ -219,29 +447,6 @@ export default function Navigation() {
                   >
                     Get Involved Today
                   </Button>
-                </motion.div>
-
-                {/* Quick Stats */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 }}
-                  className="grid grid-cols-3 gap-4 mt-6"
-                >
-                  <div className="p-3 text-center bg-white/60 backdrop-blur-sm rounded-xl">
-                    <div className="text-2xl font-bold text-blue-600">500+</div>
-                    <div className="text-xs text-gray-600">Students</div>
-                  </div>
-                  <div className="p-3 text-center bg-white/60 backdrop-blur-sm rounded-xl">
-                    <div className="text-2xl font-bold text-orange-600">
-                      25+
-                    </div>
-                    <div className="text-xs text-gray-600">Events</div>
-                  </div>
-                  <div className="p-3 text-center bg-white/60 backdrop-blur-sm rounded-xl">
-                    <div className="text-2xl font-bold text-blue-600">12</div>
-                    <div className="text-xs text-gray-600">Executives</div>
-                  </div>
                 </motion.div>
               </div>
             </SheetContent>

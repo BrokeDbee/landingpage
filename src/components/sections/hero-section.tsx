@@ -1,23 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Play,
-  Users,
-  Calendar,
-  Trophy,
-  Star,
-  BookOpen,
-  Award,
-} from "lucide-react";
+import { Play, Users, Star, BookOpen, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
-const stats = [
-  { icon: Users, value: "5000+", label: "Students", color: "bg-blue-500" },
-  { icon: Calendar, value: "50+", label: "Events", color: "bg-green-500" },
-  { icon: Trophy, value: "25+", label: "Awards", color: "bg-yellow-500" },
-];
 
 const floatingCards = [
   {
@@ -48,15 +34,12 @@ const floatingCards = [
 
 export default function HeroSection() {
   return (
-    <section
-      className="flex items-center justify-center min-h-screen pt-20 "
-      id="home"
-    >
+    <section className="flex items-center justify-center   " id="home">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative w-full overflow-hidden bg-white "
+        className="relative w-full overflow-hidden bg-white min-h-screen "
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
           {/* Left Content */}
@@ -245,38 +228,6 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Bottom Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="px-8 py-8 bg-gray-50 lg:px-16"
-        >
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 sm:grid-cols-2">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 1.4 + index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-4 md:justify-center"
-              >
-                <div
-                  className={`w-16 h-16 ${stat.color} rounded-2xl flex items-center justify-center shadow-lg`}
-                >
-                  <stat.icon className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-3xl font-bold text-gray-900">
-                    {stat.value}
-                  </h3>
-                  <p className="font-medium text-gray-600">{stat.label}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
         {/* Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
