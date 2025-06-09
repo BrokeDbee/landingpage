@@ -12,7 +12,6 @@ import {
   Phone,
   Home,
   Newspaper,
-  Heart,
   BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -55,13 +54,13 @@ const navItems: ItemType[] = [
     type: "single",
   },
   {
-    name: "Student Life",
-    icon: Heart,
+    name: "Services",
+    href: "/services",
+    icon: FileText,
     type: "dropdown",
     items: [
-      { name: "Services", href: "/services", icon: FileText },
-      { name: "Resources", href: "/resources", icon: BookOpen },
-      { name: "Get Involved", href: "/get-involved", icon: Users },
+      { name: "All Services", href: "/services", icon: FileText },
+      { name: "permits", href: "/services/permits", icon: BookOpen },
     ],
   },
   {
@@ -159,21 +158,27 @@ export default function Navigation() {
   );
 
   const isActive = (item: ItemType) => {
-    // Check direct link match including special case for "Home" pointing to "/"
+    // if its / skip the check
+    if (pathname === "/") {
+      return item.name === "Home";
+    }
+
+    // Check if the pathname starts with the item's href
     if (
       item.href &&
-      (pathname === item.href || (item.name === "Home" && pathname === "/"))
+      (pathname.startsWith(item.href) ||
+        (item.name === "Home" && pathname === "/"))
     ) {
       return true;
     }
-    // If the item has sub-links, return true if any of them match the current pathname
+    // If the item has sub-links, return true if any of them match the current pathname start
     if (item.items) {
       return item.items.some(
         (subItem) =>
-          (subItem.href &&
-            (pathname === subItem.href ||
-              (subItem.name === "Home" && pathname === "/"))) ||
-          (activeItem.href && activeItem.href === subItem.href)
+          subItem.href &&
+          (pathname.startsWith(subItem.href) ||
+            (subItem.name === "Home" && pathname === "/") ||
+            (activeItem.href && activeItem.href === subItem.href))
       );
     }
     return false;

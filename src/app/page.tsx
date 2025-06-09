@@ -7,12 +7,15 @@ import ExecutivesSection from "@/components/sections/executives-section";
 import CallToActionSection from "@/components/sections/call-to-action-section";
 import NewsletterSection from "@/components/sections/newsletter-section";
 import MemoryGameSection from "@/components/sections/memory-game-section";
-import PermitRequestSection from "@/components/sections/permit-request-section";
+import QuickPermitCard from "@/components/sections/quick-permit-card";
 
 export default function Home() {
   return (
     <div>
       <HeroSection />
+      <div className="container py-12 mx-auto">
+        <QuickPermitCard />
+      </div>
       <QuickLinksSection />
       <VisionMissionSection />
       <NewsSection />
@@ -20,8 +23,8 @@ export default function Home() {
       <ExecutivesSection />
       <CallToActionSection />
       <MemoryGameSection />
+
       <NewsletterSection />
-      <PermitRequestSection />
     </div>
   );
 }

@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       }, {
         hostname: "images.unsplash.com",
         protocol: "https",
+      }, {
+        hostname: "api.qrserver.com",
+        protocol: "https",
       }
     ]
   }
