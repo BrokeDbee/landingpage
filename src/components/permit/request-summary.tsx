@@ -40,35 +40,35 @@ export function RequestSummary({
 
       <div className="p-8 border border-gray-200 bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl">
         <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-between py-3 border-b border-gray-200">
             <span className="font-medium text-gray-600">Student ID:</span>
             <span className="font-semibold text-gray-800">
               {formData.studentId}
             </span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-between py-3 border-b border-gray-200">
             <span className="font-medium text-gray-600">Name:</span>
             <span className="font-semibold text-gray-800">{formData.name}</span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-between py-3 border-b border-gray-200">
             <span className="font-medium text-gray-600">Course:</span>
             <span className="font-semibold text-gray-800">
               {formData.course}
             </span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-between py-3 border-b border-gray-200">
             <span className="font-medium text-gray-600">Level:</span>
             <span className="font-semibold text-gray-800">
               Level {formData.level}
             </span>
           </div>
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+          <div className="flex flex-wrap items-center justify-between py-3 border-b border-gray-200">
             <span className="font-medium text-gray-600">Email:</span>
             <span className="font-semibold text-gray-800">
               {formData.email}
             </span>
           </div>
-          <div className="flex items-center justify-between py-3">
+          <div className="flex flex-wrap items-center justify-between py-3">
             <span className="font-medium text-gray-600">Phone Number:</span>
             <span className="font-semibold text-gray-800">
               {formData.number || "Not provided"}

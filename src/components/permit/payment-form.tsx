@@ -206,7 +206,7 @@ export function PaymentForm({
       className="space-y-6"
     >
       {/* Header */}
-      <div className="mb-8 text-center">
+      <div className="mb-8 text-center flex flex-wrap items-center justify-center">
         <motion.div
           whileHover={{ scale: 1.1, rotate: 360 }}
           transition={{ duration: 0.6 }}
@@ -288,7 +288,7 @@ export function PaymentForm({
           animate={{ opacity: 1, scale: 1 }}
           className="p-8 bg-white border-2 border-blue-200 rounded-2xl"
         >
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center flex-wrap gap-4 mb-6">
             <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
               <CreditCard className="text-2xl text-blue-600" />
             </div>
@@ -304,7 +304,7 @@ export function PaymentForm({
 
           <div className="space-y-6">
             {/* Amount Display */}
-            <div className="flex items-center justify-between p-6 border border-blue-200 bg-gradient-to-r from-blue-50 to-orange-50 rounded-xl">
+            <div className="flex items-center flex-wrap justify-between p-6 border border-blue-200 bg-gradient-to-r from-blue-50 to-orange-50 rounded-xl">
               <span className="text-lg font-medium text-gray-700">
                 Amount to Pay:
               </span>

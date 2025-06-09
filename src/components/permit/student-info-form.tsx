@@ -74,6 +74,7 @@ export function StudentInfoForm({
       email: formData?.email || "",
       course: formData?.course || "",
       level: formData?.level || "",
+      number: formData?.number || "",
     },
   });
 
@@ -160,6 +161,22 @@ export function StudentInfoForm({
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </motion.div>
+
+            <motion.div whileFocus={{ scale: 1.02 }}>
+              <FormField
+                control={form.control}
+                name="number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input type="tel" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -38,7 +38,7 @@ export function StudentVerification({
       </div>
 
       <div className="p-6 mb-6 border border-green-200 rounded-xl bg-green-50">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-4 flex-wrap">
           <div className="p-3 bg-green-100 rounded-full">
             <User className="w-6 h-6 text-green-600" />
           </div>
