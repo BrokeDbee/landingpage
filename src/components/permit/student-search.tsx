@@ -121,16 +121,15 @@ export function StudentSearch({
               <AlertDescription>{searchError}</AlertDescription>
             </Alert>
           )}
-
-          <div className="p-4 mt-4 border border-blue-200 rounded-lg bg-blue-50">
-            <p className="text-blue-800">
-              <span className="font-semibold">💡 Note:</span> Enter your student
-              ID to automatically retrieve your information. If you&apos;re a
-              new student or your ID is not found, you&apos;ll be asked to enter
-              your details manually.
-            </p>
-          </div>
         </div>
+      </div>
+      <div className="p-4 mt-4 border border-blue-200 rounded-lg bg-blue-50">
+        <p className="text-blue-800">
+          <span className="font-semibold">💡 Note:</span> Enter your student ID
+          to automatically retrieve your information. If you&apos;re a new
+          student or your ID is not found, you&apos;ll be asked to enter your
+          details manually.
+        </p>
       </div>
     </motion.div>
   );

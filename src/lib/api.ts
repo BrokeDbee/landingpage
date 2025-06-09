@@ -9,7 +9,6 @@ axios.defaults.baseURL = API_BASE_URL
 export const findStudentById = async (studentId: string): Promise<StudentData | null> => {
   try {
     const response = await axios.get(`/api/students/${studentId}`)
-    console.log("Student data fetched successfully:", response.data)
     return response.data as StudentData
   } catch (error) {
     console.error("Error fetching student data:", error)
@@ -37,7 +36,7 @@ export const initiatePayment = async (data: {
   try {
     const response = await axios.post('/api/payments/initiate', data)
     return response.data
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   } catch (error: any) {
     console.error("Error initiating payment:", error)
     throw new Error(error.response?.data?.error || "Payment initiation failed")

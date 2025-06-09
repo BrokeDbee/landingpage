@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 type ItemType = {
@@ -194,10 +195,9 @@ export default function Navigation() {
             whileHover={{ scale: 1.05 }}
             className="flex items-center space-x-3"
           >
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.8 }}
+            <Link
               className="flex items-center justify-center w-12 h-12 rounded-xl"
+              href="/"
             >
               <Image
                 src="/manifest/android-chrome-512x512.png"
@@ -206,7 +206,7 @@ export default function Navigation() {
                 height={40}
                 className=""
               />
-            </motion.div>
+            </Link>
             <div className="hidden text-left xl:block">
               <h1 className="font-bold text-lg text-transparent bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text">
                 Knutsford University
