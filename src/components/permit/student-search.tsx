@@ -92,18 +92,18 @@ export function StudentSearch({
       <div className="p-8 border border-gray-200 rounded-xl bg-gray-50">
         <div className="flex flex-col gap-4">
           <label className="block font-medium text-gray-700">Student ID</label>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <Input
               type="text"
               value={studentIdInput}
               onChange={(e) => setStudentIdInput(e.target.value)}
-              placeholder="e.g., KU2023001"
+              placeholder="e.g., 2023001"
               className="w-full px-4 py-3 text-lg border-2 rounded-xl focus:border-blue-500"
             />
             <Button
               onClick={handleStudentSearch}
               disabled={isSearching || !studentIdInput.trim()}
-              className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700"
+              className="px-6 py-3 text-white rounded-xl bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 w-full"
             >
               {isSearching ? (
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
