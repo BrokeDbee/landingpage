@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Users, Lightbulb } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const actionItems = [
@@ -12,22 +12,6 @@ const actionItems = [
       "Have suggestions for improving student life? We want to hear from you!",
     action: "Submit Idea",
     color: "from-blue-500 to-blue-600",
-  },
-  {
-    icon: Users,
-    title: "Join a Committee",
-    description:
-      "Get involved in decision-making and help shape university policies.",
-    action: "Join Now",
-    color: "from-green-500 to-green-600",
-  },
-  {
-    icon: Lightbulb,
-    title: "Volunteer",
-    description:
-      "Make a difference by volunteering for events and community initiatives.",
-    action: "Volunteer",
-    color: "from-orange-500 to-orange-600",
   },
 ];
 

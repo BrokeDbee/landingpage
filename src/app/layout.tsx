@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Navigation from "@/components/layout/navigation";
 import Footer from "@/components/layout/footer";
+import QueryProvider from "@/providers/query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +32,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-          <Navigation />
-          <div className="mt-20">{children}</div>
-          <Footer />
-        </main>
-        <Analytics />
+        <QueryProvider>
+          <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+            <Navigation />
+            <div className="mt-20">{children}</div>
+            <Footer />
+          </main>
+          <Analytics />
+        </QueryProvider>
       </body>
     </html>
   );

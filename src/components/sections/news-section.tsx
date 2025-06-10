@@ -13,62 +13,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
+import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getNewsArticles } from "@/lib/api";
 
-const newsItems = [
-  {
-    title: "New Student Welfare Initiatives",
-    date: "March 15, 2024",
-    author: "SRC President",
-    authorInitials: "SP",
-    readTime: "3 min read",
-    excerpt:
-      "Introducing comprehensive mental health support programs and enhanced student counseling services to support student wellbeing across campus...",
-    category: "Welfare",
-    categoryColor: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    image:
-      "https://images.unsplash.com/photo-1659994833931-ff29b139a963?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    featured: true,
-  },
-  {
-    title: "Campus Infrastructure Updates",
-    date: "March 12, 2024",
-    author: "Facilities Team",
-    authorInitials: "FT",
-    readTime: "2 min read",
-    excerpt:
-      "Major renovations planned for the library and student center to enhance learning environments and modernize facilities...",
-    category: "Infrastructure",
-    categoryColor: "bg-blue-100 text-blue-700 border-blue-200",
-    image:
-      "https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=300&fit=crop",
-  },
-  {
-    title: "Academic Policy Changes",
-    date: "March 10, 2024",
-    author: "Academic Board",
-    authorInitials: "AB",
-    readTime: "4 min read",
-    excerpt:
-      "Important updates to examination policies and grading systems for the upcoming semester affecting all students...",
-    category: "Academic",
-    categoryColor: "bg-orange-100 text-orange-700 border-orange-200",
-    image:
-      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop",
-  },
-  {
-    title: "Student Leadership Program",
-    date: "March 8, 2024",
-    author: "SRC Secretary",
-    authorInitials: "SS",
-    readTime: "5 min read",
-    excerpt:
-      "Applications now open for the annual student leadership development program designed to empower future leaders...",
-    category: "Leadership",
-    categoryColor: "bg-orange-100 text-orange-700 border-orange-200",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop",
-  },
-];
+interface NewsArticle {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  image: string;
+  category: string;
+  categoryColor: string;
+  featured: boolean;
+  published: boolean;
+  publishedAt: string;
+  readTime: string;
+  author: {
+    name: string;
+    image: string;
+  };
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -113,6 +80,50 @@ const CardHover = ({
 );
 
 export default function NewsSection() {
+  const { data: articles, isLoading } = useQuery<NewsArticle[]>({
+    queryKey: ["featured-news"],
+    queryFn: async () => {
+      const response = await getNewsArticles({
+        featured: true,
+      });
+      if (!response.success) {
+        throw new Error("Failed to fetch news articles");
+      }
+
+      return response.data.articles;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <section className="relative py-24 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+        <div className="container relative z-10 px-4 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <Skeleton className="w-full h-80 mb-4" />
+              <Skeleton className="h-8 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="lg:col-span-4 space-y-6">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-32" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  console.log("Fetched articles:", articles);
+
+  if (!articles || articles.length === 0) {
+    return null;
+  }
+
+  const featuredArticle = articles[0];
+  const sideArticles = articles.slice(1);
+
   return (
     <section
       className="relative py-24 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30"
@@ -186,10 +197,13 @@ export default function NewsSection() {
             <Button
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              asChild
             >
-              <BookOpen className="w-4 h-4 mr-2" />
-              View All Articles
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <Link href="/news">
+                <BookOpen className="w-4 h-4 mr-2" />
+                View All Articles
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
             </Button>
           </motion.div>
         </motion.div>
@@ -208,8 +222,8 @@ export default function NewsSection() {
               <Card className="group overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm pb-0">
                 <div className="relative overflow-hidden">
                   <Image
-                    src={newsItems[0].image}
-                    alt={newsItems[0].title}
+                    src={featuredArticle.image}
+                    alt={featuredArticle.title}
                     width={800}
                     height={600}
                     className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
@@ -229,9 +243,9 @@ export default function NewsSection() {
                   <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <Badge
                       variant="secondary"
-                      className={newsItems[0].categoryColor}
+                      className={featuredArticle.categoryColor}
                     >
-                      {newsItems[0].category}
+                      {featuredArticle.category}
                     </Badge>
                   </div>
                 </div>
@@ -241,35 +255,43 @@ export default function NewsSection() {
                     <div className="flex items-center gap-2">
                       <Avatar className="w-6 h-6">
                         <AvatarFallback className="text-xs bg-blue-100 text-blue-700">
-                          {newsItems[0].authorInitials}
+                          {featuredArticle.author.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">{newsItems[0].author}</span>
+                      <span className="font-medium">
+                        {featuredArticle.author.name}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      <span>{newsItems[0].date}</span>
+                      <span>
+                        {new Date(
+                          featuredArticle.publishedAt
+                        ).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
-                      <span>{newsItems[0].readTime}</span>
+                      <span>{featuredArticle.readTime}</span>
                     </div>
                   </div>
 
                   <CardTitle className="text-3xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
-                    {newsItems[0].title}
+                    {featuredArticle.title}
                   </CardTitle>
 
                   <CardDescription className="text-gray-600 text-lg leading-relaxed mb-6">
-                    {newsItems[0].excerpt}
+                    {featuredArticle.excerpt}
                   </CardDescription>
 
                   <motion.div
                     whileHover={{ x: 5 }}
                     className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer"
                   >
-                    Continue Reading
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    <Link href={`/news/${featuredArticle.slug}`}>
+                      Continue Reading
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
                   </motion.div>
                 </CardContent>
               </Card>
@@ -278,8 +300,12 @@ export default function NewsSection() {
 
           {/* Side Articles */}
           <div className="lg:col-span-4 space-y-6">
-            {newsItems.slice(1).map((news, index) => (
-              <motion.div key={index} variants={itemVariants} custom={index}>
+            {sideArticles.map((article, index) => (
+              <motion.div
+                key={article.id}
+                variants={itemVariants}
+                custom={index}
+              >
                 <CardHover>
                   <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm h-full my-0 py-0">
                     <div className="flex h-full">
@@ -287,8 +313,8 @@ export default function NewsSection() {
                         <Image
                           width={400}
                           height={300}
-                          src={news.image}
-                          alt={news.title}
+                          src={article.image}
+                          alt={article.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 group-hover:to-black/20 transition-all duration-300" />
@@ -299,18 +325,18 @@ export default function NewsSection() {
                           <div className="flex items-center justify-between mb-2">
                             <Badge
                               variant="outline"
-                              className={`text-xs ${news.categoryColor}`}
+                              className={`text-xs ${article.categoryColor}`}
                             >
-                              {news.category}
+                              {article.category}
                             </Badge>
                           </div>
 
                           <CardTitle className="text-base font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
-                            {news.title}
+                            {article.title}
                           </CardTitle>
 
                           <CardDescription className="text-sm text-gray-600 mb-3 line-clamp-2">
-                            {news.excerpt}
+                            {article.excerpt}
                           </CardDescription>
                         </div>
 
@@ -319,20 +345,26 @@ export default function NewsSection() {
                             <div className="flex items-center gap-1">
                               <Avatar className="w-4 h-4">
                                 <AvatarFallback className="text-xs bg-gray-100 text-gray-600">
-                                  {news.authorInitials}
+                                  {article.author.name.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
-                              <span>{news.author}</span>
+                              <span>{article.author.name}</span>
                             </div>
-                            <span>{news.date}</span>
+                            <span>
+                              {new Date(
+                                article.publishedAt
+                              ).toLocaleDateString()}
+                            </span>
                           </div>
 
                           <motion.div
                             whileHover={{ x: 3 }}
                             className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                           >
-                            Read More
-                            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                            <Link href={`/news/${article.slug}`}>
+                              Read More
+                              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                            </Link>
                           </motion.div>
                         </div>
                       </CardContent>
@@ -342,30 +374,6 @@ export default function NewsSection() {
               </motion.div>
             ))}
           </div>
-        </motion.div>
-
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1 max-w-20" />
-            <span>More stories await</span>
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1 max-w-20" />
-          </div>
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300"
-          >
-            <BookOpen className="w-4 h-4 mr-2" />
-            Explore News Archive
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
         </motion.div>
       </div>
     </section>

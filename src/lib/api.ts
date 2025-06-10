@@ -95,3 +95,30 @@ export const getExecutives = async (category?: string): Promise<any> => {
     throw new Error("Failed to fetch executives")
   }
 }
+
+export const getNewsArticles = async ({ page = 1, limit = 10, featured, category }: {
+  page?: number;
+  limit?: number;
+  featured?: boolean;
+  category?: string;
+}): Promise<any> => {
+  try {
+    const response = await axios.get('/api/news', {
+      params: { page, limit, featured, category }
+    })
+    return response.data
+  } catch (error) {
+    console.error("Error fetching news articles:", error)
+    throw new Error("Failed to fetch news articles")
+  }
+}
+
+export const getArticle = async (slug: string): Promise<any> => {
+  try {
+    const response = await axios.get(`/api/news/${slug}`)
+    return response.data
+  } catch (error) {
+    console.error("Error fetching article:", error)
+    throw new Error("Failed to fetch article")
+  }
+}

@@ -1,18 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Book,
-  FileText,
-  Users,
-  MessageCircle,
-  Calendar,
-  Award,
-  HelpCircle,
-  Download,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Book, Users, MessageCircle, ArrowRight, Sparkles } from "lucide-react";
 
 const quickLinks = [
   {
@@ -23,14 +12,7 @@ const quickLinks = [
     color: "from-violet-500 via-orange-500 to-indigo-600",
     bgGlow: "violet",
   },
-  {
-    icon: FileText,
-    text: "Forms & Documents",
-    description: "Essential paperwork",
-    href: "#forms",
-    color: "from-emerald-500 via-teal-500 to-cyan-600",
-    bgGlow: "emerald",
-  },
+
   {
     icon: Users,
     text: "Student Handbook",
@@ -46,38 +28,6 @@ const quickLinks = [
     href: "#forum",
     color: "from-orange-500 via-amber-500 to-yellow-600",
     bgGlow: "orange",
-  },
-  {
-    icon: Calendar,
-    text: "Event Calendar",
-    description: "Stay updated",
-    href: "#events",
-    color: "from-blue-500 via-sky-500 to-cyan-600",
-    bgGlow: "blue",
-  },
-  {
-    icon: Award,
-    text: "Achievements",
-    description: "Celebrate success",
-    href: "#achievements",
-    color: "from-yellow-500 via-amber-500 to-orange-600",
-    bgGlow: "yellow",
-  },
-  {
-    icon: HelpCircle,
-    text: "Help Center",
-    description: "Get assistance",
-    href: "#help",
-    color: "from-indigo-500 via-blue-500 to-orange-600",
-    bgGlow: "indigo",
-  },
-  {
-    icon: Download,
-    text: "Downloads",
-    description: "Get resources",
-    href: "#downloads",
-    color: "from-teal-500 via-emerald-500 to-green-600",
-    bgGlow: "teal",
   },
 ];
 
@@ -240,20 +190,6 @@ export default function QuickLinksSection() {
             </motion.div>
           ))}
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-20 text-center"
-        >
-          <div className="inline-flex items-center gap-4 px-8 py-4 text-lg font-medium text-white border border-orange-400/30 rounded-full bg-gradient-to-r from-orange-500/20 to-blue-500/20 backdrop-blur-sm">
-            <Sparkles className="w-5 h-5 text-orange-300" />
-            Need help navigating? Visit our Help Center
-            <ArrowRight className="w-5 h-5 text-blue-300" />
-          </div>
-        </motion.div>
       </div>
     </section>
   );
