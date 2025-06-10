@@ -8,7 +8,7 @@ interface ProgressStepsProps {
 export function ProgressSteps({ step }: ProgressStepsProps) {
   return (
     <div className="flex justify-between flex-wrap mb-12">
-      {[1, 2, 3, 4, 5].map((stepNumber) => {
+      {[1, 2, 3, 4].map((stepNumber) => {
         let displayStep = step;
         if (step === 1.1 || step === 1.5) displayStep = 1;
 
@@ -16,7 +16,7 @@ export function ProgressSteps({ step }: ProgressStepsProps) {
           <div
             key={stepNumber}
             className={`flex items-center m-1 ${
-              stepNumber !== 5 ? "flex-1" : ""
+              stepNumber !== 4 ? "flex-1" : ""
             }`}
           >
             <motion.div

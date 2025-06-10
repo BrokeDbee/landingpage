@@ -1,4 +1,4 @@
-import { FileText, Clock, CheckCircle } from "lucide-react";
+import { FileText, Clock } from "lucide-react";
 import Link from "next/link";
 
 const permitServices = [
@@ -15,13 +15,6 @@ const permitServices = [
     icon: Clock,
     href: "/services/permits/status",
     color: "from-orange-500 to-orange-600",
-  },
-  {
-    title: "Permit History",
-    description: "View your past permit requests and their outcomes",
-    icon: CheckCircle,
-    href: "/services/permits/history",
-    color: "from-green-500 to-green-600",
   },
 ];
 

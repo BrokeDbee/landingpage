@@ -23,7 +23,6 @@ export default function Home() {
       <ExecutivesSection />
       <CallToActionSection />
       <MemoryGameSection />
-
       <NewsletterSection />
     </div>
   );

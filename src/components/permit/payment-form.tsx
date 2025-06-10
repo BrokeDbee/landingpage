@@ -54,12 +54,6 @@ export function PaymentForm({
       icon: "💳",
       desc: "Visa, Mastercard",
     },
-    {
-      id: "bank_transfer",
-      name: "Bank Transfer",
-      icon: "🏦",
-      desc: "Direct bank transfer",
-    },
   ];
 
   const handlePayment = async (methodId: string) => {

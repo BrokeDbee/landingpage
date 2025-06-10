@@ -16,7 +16,6 @@ export const findStudentById = async (studentId: string): Promise<StudentData | 
   }
 }
 
-
 export const initiatePayment = async (data: {
   studentId: string;
   callback_url: string;
@@ -60,5 +59,39 @@ export const getPermit = async (permitCode: string): Promise<any> => {
   } catch (error) {
     console.error("Error fetching permit:", error)
     throw new Error("Permit retrieval failed")
+  }
+}
+
+
+
+export const checkStudentStatus = async (studentId: string): Promise<any> => {
+  try {
+    const response = await axios.get(`/api/permits/status?studentId=${studentId}`)
+    return response.data
+  } catch (error) {
+    console.error("Error checking student status:", error)
+    throw new Error("Failed to check student status")
+  }
+}
+export const checkPermitStatus = async (permitCode: string): Promise<any> => {
+  try {
+    const response = await axios.get(`/api/permits/status?code=${permitCode}`)
+    return response.data
+  } catch (error) {
+    console.error("Error checking permit status:", error)
+    throw new Error("Failed to check permit status")
+  }
+}
+
+
+export const getExecutives = async (category?: string): Promise<any> => {
+  try {
+    const response = await axios.get('/api/executives', {
+      params: { category }
+    })
+    return response.data
+  } catch (error) {
+    console.error("Error fetching executives:", error)
+    throw new Error("Failed to fetch executives")
   }
 }

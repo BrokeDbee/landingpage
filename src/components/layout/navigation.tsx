@@ -59,10 +59,7 @@ const navItems: ItemType[] = [
     href: "/services",
     icon: FileText,
     type: "dropdown",
-    items: [
-      { name: "All Services", href: "/services", icon: FileText },
-      { name: "permits", href: "/services/permits", icon: BookOpen },
-    ],
+    items: [{ name: "permits", href: "/services/permits", icon: BookOpen }],
   },
   {
     name: "Contact",

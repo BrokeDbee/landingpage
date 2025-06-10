@@ -8,11 +8,11 @@ import { StudentVerification } from "@/components/permit/student-verification";
 import { RequestSummary } from "@/components/permit/request-summary";
 import { PaymentForm } from "@/components/permit/payment-form";
 import { PaymentProcessing } from "@/components/permit/payment-processing";
-import { PermitResult } from "@/components/permit/permit-result";
 import { ProgressSteps } from "@/components/permit/progress-steps";
-import { StudentData, PermitResponse, FormData } from "@/lib/types";
+import { StudentData, FormData } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
-import { getPermit } from "@/lib/api";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function PermitRequestPage() {
   const [studentIdInput, setStudentIdInput] = useState("");
@@ -20,19 +20,15 @@ export default function PermitRequestPage() {
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const permitCode = searchParams.get("permitCode");
 
   const [step, setStep] = useState(
     searchParams.get("step")
       ? parseFloat(searchParams.get("step")!)
       : searchParams.get("permitCode")
-      ? 5
+      ? 4
       : 1
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [permitResponse, setPermitResponse] = useState<PermitResponse | null>(
-    null
-  );
   const [paymentStatus, setPaymentStatus] = useState<
     "pending" | "success" | "failed" | "idle" | "verifying"
   >("idle");
@@ -106,21 +102,7 @@ export default function PermitRequestPage() {
             paymentStatus={paymentStatus}
             setPaymentStatus={setPaymentStatus}
             setStep={setStep}
-            handleSubmit={handleSubmit}
-          />
-        );
-      case 5:
-        return (
-          <PermitResult
-            isLoading={isLoading}
-            handleSubmit={handleSubmit}
-            setStep={setStep}
-            setStudentIdInput={setStudentIdInput}
-            setFormData={setFormData}
-            setPaymentStatus={setPaymentStatus}
-            permitResponse={permitResponse}
-            setStudentData={setStudentData}
-            setPermitResponse={setPermitResponse}
+            handleSubmit={() => {}}
           />
         );
       default:
@@ -128,34 +110,16 @@ export default function PermitRequestPage() {
     }
   };
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      if (!permitCode) {
-        throw new Error("Permit code is required to submit the request.");
-      }
-      const response = await getPermit(permitCode);
-      console.log("Permit response:", response);
-      setPermitResponse(response);
-      setStep(5);
-    } catch (error) {
-      console.error("Error submitting permit request:", error);
-      setPermitResponse({
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to process request. Please try again.",
-      });
-      setStep(5);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <section className="relative py-20 overflow-hidden bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="container relative z-10 px-4 mx-auto">
+        <Link
+          href="/services/permits"
+          className="inline-flex items-center mb-8 text-sm text-gray-600 hover:text-blue-600"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Permits
+        </Link>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
