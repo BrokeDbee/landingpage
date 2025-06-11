@@ -221,7 +221,10 @@ export default function ArticlePage() {
                 <div className="prose prose-lg prose-gray max-w-none">
                   <div
                     className="leading-relaxed text-gray-700"
-                    style={{ whiteSpace: "pre-wrap" }}
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "break-word",
+                    }}
                   >
                     {article.content}
                   </div>
