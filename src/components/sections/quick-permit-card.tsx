@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function QuickPermitCard() {
   return (
@@ -14,11 +15,13 @@ export default function QuickPermitCard() {
               streamlined process.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="w-full sm:w-auto">
-                Apply Now
-              </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Learn More
+              <Button size="lg" className="w-full sm:w-auto" asChild>
+                <Link
+                  href="/services/permits/request"
+                  className="flex items-center justify-center"
+                >
+                  Apply Now
+                </Link>
               </Button>
             </div>
           </div>
