@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import type React from "react";
+
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Menu,
   ChevronDown,
   ChevronRight,
   Users,
@@ -19,17 +20,19 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
-type ItemType = {
+
+interface NavItem {
   name: string;
   href?: string;
   icon: IconType;
-  type?: "single" | "dropdown";
-  items?: ItemType[];
-};
+  type: "single" | "dropdown";
+  items?: NavItem[];
+}
 
-const navItems: ItemType[] = [
+const navItems: NavItem[] = [
   {
     name: "Home",
     href: "/",
@@ -38,9 +41,9 @@ const navItems: ItemType[] = [
   },
   {
     name: "About",
+    href: "/about",
     icon: Users,
     type: "single",
-    href: "/about",
   },
   {
     name: "News",
@@ -59,84 +62,120 @@ const navItems: ItemType[] = [
     href: "/services",
     icon: FileText,
     type: "dropdown",
-    items: [{ name: "permits", href: "/services/permits", icon: BookOpen }],
+    items: [
+      {
+        name: "Permits",
+        href: "/services/permits",
+        icon: BookOpen,
+        type: "single",
+      },
+    ],
   },
   {
     name: "Contact",
-    icon: Phone,
     href: "/contact",
+    icon: Phone,
     type: "single",
   },
 ];
 
-const DropdownMenu = ({
-  item,
-  setActiveItem,
-  isActive,
-}: {
-  item: ItemType;
-  setActiveItem: (name: ItemType) => void;
-  isActive: (name: ItemType) => boolean;
-}) => {
+interface DesktopDropdownProps {
+  item: NavItem;
+  isActive: boolean;
+}
+
+const DesktopDropdown = ({ item, isActive }: DesktopDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isSubItemActive = (subItem: NavItem) => {
+    if (!subItem.href) return false;
+    if (pathname === "/" && subItem.href === "/") return true;
+    return pathname.startsWith(subItem.href) && subItem.href !== "/";
+  };
 
   return (
     <div
-      className="relative bg-gradient-to-br from-slate-50 to-blue-50/30"
+      className="relative"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
       <motion.button
-        whileHover={{ y: -2 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-          isActive(item) || isOpen
-            ? "text-blue-600 bg-blue-50"
-            : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-        }`}
+        whileHover={{ y: -1 }}
+        whileTap={{ scale: 0.98 }}
+        className={cn(
+          "relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300",
+          isActive
+            ? "text-blue-600 bg-blue-50/80 shadow-sm"
+            : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/50"
+        )}
       >
         {item.name}
         <ChevronDown
-          className={`w-4 h-4 transition-transform duration-200 ${
+          className={cn(
+            "w-4 h-4 transition-transform duration-200",
             isOpen ? "rotate-180" : ""
-          }`}
+          )}
         />
+        {isActive && (
+          <motion.div
+            layoutId="activeIndicator"
+            className="absolute inset-0 bg-gradient-to-r from-blue-100 to-orange-100 rounded-xl -z-10"
+            transition={{
+              type: "spring",
+              bounce: 0.2,
+              duration: 0.6,
+            }}
+          />
+        )}
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute top-full left-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100/50 overflow-hidden z-50"
           >
-            <div className="py-2">
+            <div className="p-2">
               {item.items?.map((subItem, index) => {
                 const IconComponent = subItem.icon;
+                const isSubActive = isSubItemActive(subItem);
+
                 return (
-                  <motion.a
+                  <motion.div
                     key={subItem.name}
-                    href={subItem.href}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    whileHover={{
-                      x: 4,
-                      backgroundColor: "rgba(59, 130, 246, 0.05)",
-                    }}
-                    onClick={() => {
-                      setActiveItem(subItem);
-                      setIsOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:text-blue-600 transition-colors duration-200"
                   >
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-orange-600 text-white">
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                    <span className="font-medium">{subItem.name}</span>
-                  </motion.a>
+                    <Link
+                      href={subItem.href || "#"}
+                      className={cn(
+                        "flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group",
+                        isSubActive
+                          ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-md"
+                          : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/80"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "p-2 rounded-lg transition-all duration-200",
+                          isSubActive
+                            ? "bg-white/20"
+                            : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110"
+                        )}
+                      >
+                        <IconComponent className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="font-medium">{subItem.name}</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
@@ -147,314 +186,402 @@ const DropdownMenu = ({
   );
 };
 
-export default function Navigation() {
-  const [activeItem, setActiveItem] = useState<ItemType>(navItems[0]);
-  const pathname = usePathname();
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(
-    null
-  );
+interface MobileNavItemProps {
+  item: NavItem;
+  index: number;
+  isActive: boolean;
+  onItemClick: () => void;
+}
 
-  const isActive = (item: ItemType) => {
-    // if its / skip the check
+const MobileNavItem = ({
+  item,
+  index,
+  isActive,
+  onItemClick,
+}: MobileNavItemProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const IconComponent = item.icon;
+
+  const isSubItemActive = (subItem: NavItem) => {
+    if (!subItem.href) return false;
+    if (pathname === "/" && subItem.href === "/") return true;
+    return pathname.startsWith(subItem.href) && subItem.href !== "/";
+  };
+
+  if (item.type === "single") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.1 * index, type: "spring", stiffness: 100 }}
+      >
+        <Link
+          href={item.href || "#"}
+          onClick={onItemClick}
+          className={cn(
+            "group flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
+            isActive
+              ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg scale-[1.02]"
+              : "bg-white/70 backdrop-blur-sm text-gray-700 hover:bg-white/90 hover:shadow-md active:scale-[0.98]"
+          )}
+        >
+          <div
+            className={cn(
+              "p-3 rounded-xl transition-all duration-300",
+              isActive
+                ? "bg-white/20 shadow-inner"
+                : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110 group-active:scale-95"
+            )}
+          >
+            <IconComponent className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <span className="text-lg font-semibold">{item.name}</span>
+          </div>
+          <ChevronRight
+            className={cn(
+              "w-5 h-5 transition-all duration-300",
+              isActive
+                ? "text-white/80"
+                : "text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1"
+            )}
+          />
+        </Link>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.1 * index, type: "spring", stiffness: 100 }}
+      className="space-y-3"
+    >
+      <motion.button
+        whileTap={{ scale: 0.98 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "group w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
+          isActive
+            ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg"
+            : "bg-white/70 backdrop-blur-sm text-gray-700 hover:bg-white/90 hover:shadow-md"
+        )}
+      >
+        <div
+          className={cn(
+            "p-3 rounded-xl transition-all duration-300",
+            isActive
+              ? "bg-white/20 shadow-inner"
+              : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110"
+          )}
+        >
+          <IconComponent className="w-5 h-5" />
+        </div>
+        <div className="flex-1 text-left">
+          <span className="text-lg font-semibold">{item.name}</span>
+        </div>
+        <ChevronDown
+          className={cn(
+            "w-5 h-5 transition-all duration-300",
+            isOpen ? "rotate-180" : "",
+            isActive
+              ? "text-white/80"
+              : "text-gray-400 group-hover:text-blue-500"
+          )}
+        />
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="ml-6 space-y-2 overflow-hidden"
+          >
+            {item.items?.map((subItem, subIndex) => {
+              const SubIconComponent = subItem.icon;
+              const isSubActive = isSubItemActive(subItem);
+
+              return (
+                <motion.div
+                  key={subItem.name}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: subIndex * 0.05 }}
+                >
+                  <Link
+                    href={subItem.href || "#"}
+                    onClick={onItemClick}
+                    className={cn(
+                      "flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group",
+                      isSubActive
+                        ? "bg-gradient-to-r from-blue-400 to-orange-400 text-white shadow-md"
+                        : "bg-white/50 backdrop-blur-sm text-gray-600 hover:text-blue-600 hover:bg-white/80"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "p-2 rounded-lg transition-all duration-200",
+                        isSubActive
+                          ? "bg-white/20"
+                          : "bg-gradient-to-br from-blue-400 to-orange-400 text-white group-hover:scale-110"
+                      )}
+                    >
+                      <SubIconComponent className="w-4 h-4" />
+                    </div>
+                    <span className="font-medium">{subItem.name}</span>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+export default function Navigation() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isActive = (item: NavItem): boolean => {
+    // Handle home page specifically
     if (pathname === "/") {
       return item.name === "Home";
     }
 
-    // Check if the pathname starts with the item's href
-    if (
-      item.href &&
-      (pathname.startsWith(item.href) ||
-        (item.name === "Home" && pathname === "/"))
-    ) {
-      return true;
+    // For single items, check direct path match
+    if (item.type === "single" && item.href) {
+      return pathname.startsWith(item.href) && item.href !== "/";
     }
-    // If the item has sub-links, return true if any of them match the current pathname start
-    if (item.items) {
-      return item.items.some(
-        (subItem) =>
-          subItem.href &&
-          (pathname.startsWith(subItem.href) ||
-            (subItem.name === "Home" && pathname === "/") ||
-            (activeItem.href && activeItem.href === subItem.href))
-      );
+
+    // For dropdown items, check if any sub-item is active
+    if (item.type === "dropdown" && item.items) {
+      return item.items.some((subItem) => {
+        if (!subItem.href) return false;
+        return pathname.startsWith(subItem.href) && subItem.href !== "/";
+      });
     }
+
     return false;
   };
+
   return (
-    <nav
-      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500   from-slate-50 to-blue-50/30`}
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={cn(
+        "fixed top-0 right-0 left-0 z-50 transition-all duration-500",
+        isScrolled
+          ? " bg-gradient-to-br from-slate-50 to-blue-50/30 backdrop-blur-md"
+          : "bg-white/80 backdrop-blur-md"
+      )}
     >
-      <div className="container px-4 mx-auto border-b border-gray-200 backdrop-blur-md">
+      <div className="container px-4 mx-auto">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <motion.div
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className="flex items-center space-x-3"
           >
-            <Link
-              className="flex items-center justify-center w-12 h-12 rounded-xl"
-              href="/"
-            >
-              <Image
-                src="/manifest/android-chrome-512x512.png"
-                alt="Knutsford University Logo"
-                width={40}
-                height={40}
-                className=""
-              />
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-orange-500 rounded-xl blur opacity-20"></div>
+                <div className="relative flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-lg">
+                  <Image
+                    src="/manifest/android-chrome-512x512.png"
+                    alt="Knutsford University Logo"
+                    width={32}
+                    height={32}
+                    className="rounded-lg"
+                  />
+                </div>
+              </div>
+              <div className="hidden text-left xl:block">
+                <h1 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text text-transparent">
+                  Knutsford University
+                </h1>
+                <p className="text-sm text-gray-600 font-medium">
+                  Student Representative Council
+                </p>
+              </div>
             </Link>
-            <div className="hidden text-left xl:block">
-              <h1 className="font-bold text-lg text-transparent bg-gradient-to-r from-blue-600 to-orange-600 bg-clip-text">
-                Knutsford University
-              </h1>
-              <p className="text-sm text-gray-600">
-                Student Representative Council
-              </p>
-            </div>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="items-center hidden space-x-2 lg:flex">
+          <div className="items-center hidden space-x-1 lg:flex">
             {navItems.map((item, index) => (
               <motion.div
                 key={item.name}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
+                transition={{
+                  delay: 0.1 * index,
+                  type: "spring",
+                  stiffness: 100,
+                }}
               >
                 {item.type === "single" ? (
-                  <motion.a
-                    href={item.href}
-                    whileHover={{ y: -2 }}
-                    onClick={() => setActiveItem(item)}
-                    className={`relative px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
-                      isActive(item)
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
-                    }`}
-                  >
-                    {item.name}
-                    {isActive(item) && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 bg-blue-100 rounded-lg -z-10"
-                        transition={{
-                          type: "spring",
-                          bounce: 0.2,
-                          duration: 0.6,
-                        }}
-                      />
-                    )}
-                  </motion.a>
+                  <Link href={item.href || "#"}>
+                    <motion.div
+                      whileHover={{ y: -1 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={cn(
+                        "relative px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300",
+                        isActive(item)
+                          ? "text-blue-600 bg-blue-50/80 shadow-sm"
+                          : "text-gray-700 hover:text-blue-600 hover:bg-blue-50/50"
+                      )}
+                    >
+                      {item.name}
+                      {isActive(item) && (
+                        <motion.div
+                          layoutId="activeIndicator"
+                          className="absolute inset-0 bg-gradient-to-r from-blue-100 to-orange-100 rounded-xl -z-10"
+                          transition={{
+                            type: "spring",
+                            bounce: 0.2,
+                            duration: 0.6,
+                          }}
+                        />
+                      )}
+                    </motion.div>
+                  </Link>
                 ) : (
-                  <DropdownMenu
-                    item={item}
-                    setActiveItem={setActiveItem}
-                    isActive={isActive}
-                  />
+                  <DesktopDropdown item={item} isActive={isActive(item)} />
                 )}
               </motion.div>
             ))}
           </div>
 
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 }}
-            className="hidden lg:block"
-          >
-            <Button className="px-6 py-2 text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700 hover:shadow-xl hover:scale-105">
-              Get Involved
-            </Button>
-          </motion.div>
-
-          {/* Mobile Menu */}
+          {/* Mobile Menu Button */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                <Menu className="w-6 h-6" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden relative p-2 rounded-xl hover:bg-blue-50/50 transition-colors"
+              >
+                <motion.div
+                  animate={isSheetOpen ? "open" : "closed"}
+                  className="w-6 h-6 flex flex-col justify-center items-center"
+                >
+                  <motion.span
+                    variants={{
+                      closed: { rotate: 0, y: 0 },
+                      open: { rotate: 45, y: 6 },
+                    }}
+                    className="w-6 h-0.5 bg-gray-700 block absolute transition-all"
+                  />
+                  <motion.span
+                    variants={{
+                      closed: { opacity: 1 },
+                      open: { opacity: 0 },
+                    }}
+                    className="w-6 h-0.5 bg-gray-700 block absolute transition-all"
+                  />
+                  <motion.span
+                    variants={{
+                      closed: { rotate: 0, y: 0 },
+                      open: { rotate: -45, y: -6 },
+                    }}
+                    className="w-6 h-0.5 bg-gray-700 block absolute transition-all"
+                  />
+                </motion.div>
               </Button>
             </SheetTrigger>
+
             <SheetContent
               side="right"
-              className="w-full p-0 sm:w-80 bg-gradient-to-br from-slate-50 to-blue-50/30"
+              className="w-full p-0 sm:w-96 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 border-l border-gray-100/50"
             >
-              {/* Header */}
-              <div className="relative p-6 bg-gradient-to-r from-blue-600 to-orange-600 overflow-hidden">
+              {/* Mobile Header */}
+              <div className="relative p-6 bg-gradient-to-br from-blue-600 via-blue-500 to-orange-500 overflow-hidden">
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
                   className="relative z-10"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl">
-                      <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                        <span className="text-blue-600 font-bold">KU</span>
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-white/20 rounded-2xl blur"></div>
+                      <div className="relative flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl">
+                        <Image
+                          src="/manifest/android-chrome-512x512.png"
+                          alt="KU Logo"
+                          width={32}
+                          height={32}
+                          className="rounded-lg"
+                        />
                       </div>
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-white">KU SRC</h2>
-                      <p className="text-sm text-blue-100">Student Council</p>
+                      <p className="text-sm text-blue-100 font-medium">
+                        Student Representative Council
+                      </p>
                     </div>
                   </div>
                 </motion.div>
 
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 translate-x-16 -translate-y-16 rounded-full bg-white/10"></div>
-                <div className="absolute bottom-0 left-0 w-20 h-20 -translate-x-10 translate-y-10 rounded-full bg-orange-400/20"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 -translate-x-12 translate-y-12 rounded-full bg-orange-300/20"></div>
+                <div className="absolute top-1/2 right-1/4 w-16 h-16 rounded-full bg-white/5"></div>
               </div>
 
-              {/* Navigation Items */}
+              {/* Mobile Navigation Items */}
               <div className="px-6 py-8 overflow-auto max-h-[calc(100vh-200px)]">
-                <div className="space-y-3">
-                  {navItems.map((item, index) => {
-                    const IconComponent = item.icon;
-
-                    if (item.type === "single") {
-                      return (
-                        <motion.a
-                          key={item.name}
-                          href={item.href}
-                          initial={{ opacity: 0, x: 50 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          whileHover={{ x: 8, scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            setActiveItem(item);
-                            setIsSheetOpen(false);
-                          }}
-                          className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${
-                            isActive(item)
-                              ? "bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg"
-                              : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 hover:shadow-md"
-                          }`}
-                        >
-                          <div className="flex items-center space-x-4">
-                            <div
-                              className={`p-2 rounded-lg transition-all duration-300 ${
-                                isActive(item)
-                                  ? "bg-white/20"
-                                  : "bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110"
-                              }`}
-                            >
-                              <IconComponent className="w-5 h-5" />
-                            </div>
-                            <span className="text-lg font-medium">
-                              {item.name}
-                            </span>
-                          </div>
-                          <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                        </motion.a>
-                      );
-                    } else {
-                      return (
-                        <motion.div
-                          key={item.name}
-                          initial={{ opacity: 0, x: 50 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          className="space-y-2"
-                        >
-                          <motion.button
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => {
-                              setOpenMobileDropdown(
-                                openMobileDropdown === item.name
-                                  ? null
-                                  : item.name
-                              );
-                            }}
-                            className="group w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 hover:shadow-md"
-                          >
-                            <div className="flex items-center space-x-4">
-                              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-orange-500 text-white group-hover:scale-110 transition-transform">
-                                <IconComponent className="w-5 h-5" />
-                              </div>
-                              <span className="text-lg font-medium">
-                                {item.name}
-                              </span>
-                            </div>
-                            <ChevronDown
-                              className={`w-5 h-5 transition-transform ${
-                                openMobileDropdown === item.name
-                                  ? "rotate-180"
-                                  : ""
-                              }`}
-                            />
-                          </motion.button>
-
-                          <AnimatePresence>
-                            {openMobileDropdown === item.name && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="ml-4 space-y-2 overflow-hidden"
-                              >
-                                {item.items?.map((subItem, subIndex) => {
-                                  const SubIconComponent = subItem.icon;
-                                  return (
-                                    <motion.a
-                                      key={subItem.name}
-                                      href={subItem.href}
-                                      initial={{ opacity: 0, x: 20 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: subIndex * 0.05 }}
-                                      whileHover={{ x: 4 }}
-                                      onClick={() => {
-                                        setActiveItem(subItem);
-                                        setIsSheetOpen(false);
-                                      }}
-                                      className="flex items-center space-x-3 p-3 rounded-lg bg-white/40 backdrop-blur-sm text-gray-600 hover:text-blue-600 hover:bg-white/60 transition-all duration-200"
-                                    >
-                                      <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-400 to-orange-500 text-white">
-                                        <SubIconComponent className="w-4 h-4" />
-                                      </div>
-                                      <span className="font-medium">
-                                        {subItem.name}
-                                      </span>
-                                    </motion.a>
-                                  );
-                                })}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      );
-                    }
-                  })}
+                <div className="space-y-4">
+                  {navItems.map((item, index) => (
+                    <MobileNavItem
+                      key={item.name}
+                      item={item}
+                      index={index}
+                      isActive={isActive(item)}
+                      onItemClick={() => setIsSheetOpen(false)}
+                    />
+                  ))}
                 </div>
 
-                {/* CTA Section */}
+                {/* Mobile Footer */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                  className="p-6 mt-8 text-white bg-gradient-to-r from-blue-600 to-orange-600 rounded-2xl"
+                  transition={{ delay: 0.5 }}
+                  className="mt-12 pt-8 border-t border-gray-200/50"
                 >
-                  <h3 className="mb-2 text-lg font-semibold">
-                    Ready to Make a Difference?
-                  </h3>
-                  <p className="mb-4 text-sm text-blue-100">
-                    Join our community and help shape the future of student life
-                    at Knutsford University.
-                  </p>
-                  <Button
-                    className="w-full font-semibold text-blue-600 transition-all duration-300 transform bg-white hover:bg-blue-50 hover:scale-105"
-                    onClick={() => setIsSheetOpen(false)}
-                  >
-                    Get Involved Today
-                  </Button>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-500 font-medium">
+                      © 2024 Knutsford University SRC
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Empowering Student Voices
+                    </p>
+                  </div>
                 </motion.div>
               </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }

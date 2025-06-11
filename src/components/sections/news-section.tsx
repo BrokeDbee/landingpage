@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type React from "react";
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight, Clock, BookOpen, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,32 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getNewsArticles } from "@/lib/api";
-
-interface NewsArticle {
-  id: number;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string;
-  image: string;
-  category: string;
-  categoryColor: string;
-  featured: boolean;
-  published: boolean;
-  publishedAt: string;
-  readTime: string;
-  author: {
-    name: string;
-    image: string;
-  };
-}
-
+import { getFeaturedArticles, NewsArticle } from "@/lib/api";
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -80,16 +60,17 @@ const CardHover = ({
 );
 
 export default function NewsSection() {
-  const { data: articles, isLoading } = useQuery<NewsArticle[]>({
+  const {
+    data: newsData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["featured-news"],
     queryFn: async () => {
-      const response = await getNewsArticles({
-        featured: true,
-      });
+      const response = await getFeaturedArticles(4);
       if (!response.success) {
-        throw new Error("Failed to fetch news articles");
+        throw new Error(response.error || "Failed to fetch featured articles");
       }
-
       return response.data.articles;
     },
   });
@@ -105,7 +86,7 @@ export default function NewsSection() {
               <Skeleton className="h-4 w-1/2" />
             </div>
             <div className="lg:col-span-4 space-y-6">
-              {[1, 2, 3].map((i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} className="h-32" />
               ))}
             </div>
@@ -115,14 +96,12 @@ export default function NewsSection() {
     );
   }
 
-  console.log("Fetched articles:", articles);
-
-  if (!articles || articles.length === 0) {
+  if (error || !newsData || newsData.length === 0) {
     return null;
   }
 
-  const featuredArticle = articles[0];
-  const sideArticles = articles.slice(1);
+  const featuredArticle = newsData[0];
+  const sideArticles = newsData.slice(1, 4);
 
   return (
     <section
@@ -133,23 +112,19 @@ export default function NewsSection() {
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          animate={{
-            rotate: 360,
-          }}
+          animate={{ rotate: 360 }}
           transition={{
             duration: 50,
-            repeat: Infinity,
+            repeat: Number.POSITIVE_INFINITY,
             ease: "linear",
           }}
           className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-100/30 to-orange-100/30 rounded-full blur-3xl"
         />
         <motion.div
-          animate={{
-            rotate: -360,
-          }}
+          animate={{ rotate: -360 }}
           transition={{
             duration: 70,
-            repeat: Infinity,
+            repeat: Number.POSITIVE_INFINITY,
             ease: "linear",
           }}
           className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-emerald-100/30 to-cyan-100/30 rounded-full blur-3xl"
@@ -219,10 +194,10 @@ export default function NewsSection() {
           {/* Featured Article */}
           <motion.div variants={itemVariants} className="lg:col-span-8">
             <CardHover>
-              <Card className="group overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm pb-0">
+              <Card className="group overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm">
                 <div className="relative overflow-hidden">
                   <Image
-                    src={featuredArticle.image}
+                    src={featuredArticle.image || "/placeholder.svg"}
                     alt={featuredArticle.title}
                     width={800}
                     height={600}
@@ -254,12 +229,17 @@ export default function NewsSection() {
                   <div className="flex items-center gap-6 mb-6 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       <Avatar className="w-6 h-6">
+                        <AvatarImage
+                          src={featuredArticle.author.image || ""}
+                          alt={featuredArticle.author?.username}
+                        />
+
                         <AvatarFallback className="text-xs bg-blue-100 text-blue-700">
-                          {featuredArticle.author.name.charAt(0)}
+                          {featuredArticle.author.username.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <span className="font-medium">
-                        {featuredArticle.author.name}
+                        {featuredArticle.author.username}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -288,7 +268,10 @@ export default function NewsSection() {
                     whileHover={{ x: 5 }}
                     className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer"
                   >
-                    <Link href={`/news/${featuredArticle.slug}`}>
+                    <Link
+                      href={`/news/${featuredArticle.slug}`}
+                      className="flex items-center gap-2"
+                    >
                       Continue Reading
                       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </Link>
@@ -300,20 +283,20 @@ export default function NewsSection() {
 
           {/* Side Articles */}
           <div className="lg:col-span-4 space-y-6">
-            {sideArticles.map((article, index) => (
+            {sideArticles.map((article: NewsArticle, index: number) => (
               <motion.div
                 key={article.id}
                 variants={itemVariants}
                 custom={index}
               >
                 <CardHover>
-                  <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm h-full my-0 py-0">
+                  <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm h-full">
                     <div className="flex h-full">
                       <div className="relative w-24 flex-shrink-0 overflow-hidden">
                         <Image
                           width={400}
                           height={300}
-                          src={article.image}
+                          src={article.image || "/placeholder.svg"}
                           alt={article.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
@@ -344,11 +327,16 @@ export default function NewsSection() {
                           <div className="flex items-center gap-4 text-xs text-gray-500">
                             <div className="flex items-center gap-1">
                               <Avatar className="w-4 h-4">
-                                <AvatarFallback className="text-xs bg-gray-100 text-gray-600">
-                                  {article.author.name.charAt(0)}
+                                <AvatarImage
+                                  src={featuredArticle.author.image || ""}
+                                  alt={featuredArticle.author?.username}
+                                />
+
+                                <AvatarFallback className="text-xs bg-gray-100 text-gray-600 capitalize">
+                                  {article.author.username.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
-                              <span>{article.author.name}</span>
+                              <span>{article.author.username}</span>
                             </div>
                             <span>
                               {new Date(
@@ -361,7 +349,10 @@ export default function NewsSection() {
                             whileHover={{ x: 3 }}
                             className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                           >
-                            <Link href={`/news/${article.slug}`}>
+                            <Link
+                              href={`/news/${article.slug}`}
+                              className="flex items-center gap-1"
+                            >
                               Read More
                               <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                             </Link>

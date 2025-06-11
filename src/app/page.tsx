@@ -8,6 +8,7 @@ import CallToActionSection from "@/components/sections/call-to-action-section";
 import NewsletterSection from "@/components/sections/newsletter-section";
 import MemoryGameSection from "@/components/sections/memory-game-section";
 import QuickPermitCard from "@/components/sections/quick-permit-card";
+import QueryProvider from "@/providers/query-provider";
 
 export default function Home() {
   return (
@@ -18,7 +19,9 @@ export default function Home() {
       </div>
       <QuickLinksSection />
       <VisionMissionSection />
-      <NewsSection />
+      <QueryProvider>
+        <NewsSection />
+      </QueryProvider>
       <EventsSection />
       <ExecutivesSection />
       <CallToActionSection />

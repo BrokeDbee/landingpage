@@ -5,23 +5,32 @@ import { Card } from "@/components/ui/card";
 
 export default function QuickPermitCard() {
   return (
-    <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100/50">
-      <div className="flex items-start gap-4">
-        <div className="p-3 text-white rounded-lg bg-gradient-to-r from-blue-600 to-blue-700">
-          <FileText className="w-6 h-6" />
-        </div>
-        <div className="flex-1">
-          <h3 className="mb-2 text-xl font-semibold text-gray-900">
-            Need a Permit?
-          </h3>
-          <p className="mb-4 text-gray-600">
-            Submit your permit request for exams. Quick and easy process!
-          </p>
-          <Link href="/services/permits/request">
-            <Button className="w-full sm:w-auto">Request Permit</Button>
-          </Link>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8 lg:p-12">
+          <div className="space-y-6">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+              Quick Permit Application
+            </h2>
+            <p className="text-gray-600 text-base md:text-lg">
+              Apply for your student permit quickly and easily through our streamlined process.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" className="w-full sm:w-auto">
+                Apply Now
+              </Button>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                Learn More
+              </Button>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="aspect-square md:aspect-auto md:h-full bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl p-6">
+              {/* Add your permit card illustration or form here */}
+            </div>
+          </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
