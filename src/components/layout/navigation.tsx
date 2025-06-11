@@ -45,6 +45,13 @@ const navItems: NavItem[] = [
     icon: Users,
     type: "single",
   },
+  // executives
+  {
+    name: "Executives",
+    href: "/executives",
+    icon: Users,
+    type: "single",
+  },
   {
     name: "News",
     href: "/news",
@@ -570,7 +577,7 @@ export default function Navigation() {
                 >
                   <div className="text-center">
                     <p className="text-sm text-gray-500 font-medium">
-                      © 2024 Knutsford University SRC
+                      © 2025 Knutsford University SRC
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
                       Empowering Student Voices
