@@ -1,7 +1,4 @@
-import { FileText } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 export default function QuickPermitCard() {
   return (
@@ -13,7 +10,8 @@ export default function QuickPermitCard() {
               Quick Permit Application
             </h2>
             <p className="text-gray-600 text-base md:text-lg">
-              Apply for your student permit quickly and easily through our streamlined process.
+              Apply for your student permit quickly and easily through our
+              streamlined process.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="w-full sm:w-auto">
