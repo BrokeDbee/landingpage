@@ -148,7 +148,7 @@ export default function EventsSection() {
                 </div>
 
                 <div className="p-6 flex flex-col h-full">
-                  <div className="mb-auto">
+                  <div className="">
                     <h3 className="text-xl font-semibold mb-3 text-gray-900">
                       {event.title}
                     </h3>
