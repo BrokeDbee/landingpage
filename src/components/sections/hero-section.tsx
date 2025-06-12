@@ -34,12 +34,12 @@ const floatingCards = [
 
 export default function HeroSection() {
   return (
-    <section className="flex items-center justify-center   " id="home">
+    <section className="flex items-center justify-center" id="home">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative w-full overflow-hidden bg-white min-h-screen "
+        className="relative w-full overflow-hidden bg-white min-h-screen pb-12"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
           {/* Left Content */}
@@ -233,7 +233,7 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-20"
         >
           <motion.div
             animate={{ y: [0, 10, 0] }}

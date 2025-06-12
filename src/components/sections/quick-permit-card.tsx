@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function QuickPermitCard() {
@@ -27,7 +28,14 @@ export default function QuickPermitCard() {
           </div>
           <div className="relative">
             <div className="aspect-square md:aspect-auto md:h-full bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl p-6">
-              {/* Add your permit card illustration or form here */}
+              <Image
+                src="/images/permit-illustration.jpg"
+                alt="Quick Permit Application"
+                className="object-cover rounded-lg shadow-lg"
+                width={500}
+                height={500}
+                priority
+              />
             </div>
           </div>
         </div>

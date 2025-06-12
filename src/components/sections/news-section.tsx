@@ -131,7 +131,7 @@ export default function NewsSection() {
         />
       </div>
 
-      <div className="container relative z-10 px-4 mx-auto max-w-7xl">
+      <div className=" relative z-10 px-4 mx-auto max-w-7xl">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
