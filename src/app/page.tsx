@@ -22,7 +22,9 @@ export default function Home() {
       <QueryProvider>
         <NewsSection />
       </QueryProvider>
-      <EventsSection />
+      <QueryProvider>
+        <EventsSection />
+      </QueryProvider>
       <ExecutivesSection />
       <CallToActionSection />
       <MemoryGameSection />

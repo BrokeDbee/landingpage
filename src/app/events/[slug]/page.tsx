@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, Clock, ArrowLeft, Share2, BookOpen } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  ArrowLeft,
+  Share2,
+  MapPin,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,25 +18,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getArticle } from "@/lib/api";
+import { getEvent } from "@/lib/api";
 import { format } from "date-fns";
 import { ShareDialog } from "@/components/ui/share-dialog";
 
-export default function ArticlePage() {
+export default function EventPage() {
   const params = useParams();
   const slug = params.slug as string;
 
   const {
-    data: article,
+    data: event,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["article", slug],
+    queryKey: ["event", slug],
     queryFn: async () => {
-      const response = await getArticle(slug);
+      const response = await getEvent(slug);
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to fetch article");
+        throw new Error(response.error || "Failed to fetch event");
       }
 
       return response.data;
@@ -57,7 +64,7 @@ export default function ArticlePage() {
     );
   }
 
-  if (error || !article) {
+  if (error || !event) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
         <div className="container mx-auto px-4 py-16 text-center">
@@ -66,15 +73,15 @@ export default function ArticlePage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto"
           >
-            <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
+            <h1 className="text-4xl font-bold mb-4">Event Not Found</h1>
             <p className="text-gray-600 mb-8">
-              The article you&apos;re looking for doesn&apos;t exist or has been
+              The event you&apos;re looking for doesn&apos;t exist or has been
               removed.
             </p>
             <Button asChild>
-              <Link href="/news">
+              <Link href="/events">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to News
+                Back to Events
               </Link>
             </Button>
           </motion.div>
@@ -94,20 +101,20 @@ export default function ArticlePage() {
           {/* Navigation */}
           <div className="flex items-center justify-between mb-8">
             <Button variant="ghost" className="hover:bg-white/50" asChild>
-              <Link href="/news" className="flex items-center gap-2">
+              <Link href="/events" className="flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                Back to News
+                Back to Events
               </Link>
             </Button>
 
             <ShareDialog
-              title="article"
+              title="event"
               url={window.location.href}
-              description={article.excerpt}
+              description={event.excerpt}
             />
           </div>
 
-          {/* Article Header */}
+          {/* Event Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,10 +122,8 @@ export default function ArticlePage() {
             className="mb-8"
           >
             <div className="flex items-center gap-2 mb-4">
-              <Badge className={article.categoryColor}>
-                {article.category}
-              </Badge>
-              {article.featured && (
+              <Badge className={event.categoryColor}>{event.category}</Badge>
+              {event.featured && (
                 <Badge className="bg-gradient-to-r from-blue-600 to-orange-600 text-white">
                   ⭐ Featured
                 </Badge>
@@ -126,48 +131,53 @@ export default function ArticlePage() {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              {article.title}
+              {event.title}
             </h1>
 
             <p className="text-xl text-gray-600 leading-relaxed mb-8">
-              {article.excerpt}
+              {event.excerpt}
             </p>
 
-            {/* Author and Meta Info */}
+            {/* Organizer and Meta Info */}
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
                   <AvatarImage
-                    src={article.author.image || ""}
-                    alt={article.author?.username}
+                    src={event.organizer.image || ""}
+                    alt={event.organizer?.username}
                   />
                   <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
-                    {article.author.username.charAt(0)}
+                    {event.organizer.username.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-semibold text-gray-900">
-                    {article.author.username}
+                    {event.organizer.username}
                   </p>
-                  <p className="text-gray-500">Author</p>
+                  <p className="text-gray-500">Organizer</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span>
-                  {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
-                </span>
+                <span>{format(new Date(event.date), "MMMM dd, yyyy")}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>{article.readTime}</span>
+                <span>{event.time}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4" />
-                <span>{article.category}</span>
+                <MapPin className="w-4 h-4" />
+                <span>{event.location}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span>
+                  {event.currentAttendees} / {event.maxAttendees} attendees
+                </span>
               </div>
             </div>
           </motion.div>
@@ -180,8 +190,8 @@ export default function ArticlePage() {
             className="relative overflow-hidden rounded-2xl mb-12 shadow-2xl"
           >
             <Image
-              src={article.image || "/placeholder.svg"}
-              alt={article.title}
+              src={event.image || "/placeholder.svg"}
+              alt={event.title}
               width={1200}
               height={600}
               className="w-full h-[500px] object-cover"
@@ -190,7 +200,7 @@ export default function ArticlePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </motion.div>
 
-          {/* Article Content */}
+          {/* Event Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,14 +216,14 @@ export default function ArticlePage() {
                       overflowWrap: "break-word",
                     }}
                   >
-                    {article.content}
+                    {event.description}
                   </div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* Article Footer */}
+          {/* Event Footer */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -222,29 +232,28 @@ export default function ArticlePage() {
           >
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="text-sm text-gray-500">
-                Published on{" "}
-                {format(new Date(article.publishedAt), "MMMM dd, yyyy")} by{" "}
+                Organized by{" "}
                 <span className="font-semibold text-gray-700">
-                  {article.author.username}
+                  {event.organizer.username}
                 </span>
               </div>
 
               <div className="flex gap-2">
                 <ShareDialog
-                  title="article"
+                  title="event"
                   url={window.location.href}
-                  description={article.excerpt}
+                  description={event.excerpt}
                   trigger={
                     <Button variant="outline" size="sm">
                       <Share2 className="w-4 h-4 mr-2" />
-                      Share Article
+                      Share Event
                     </Button>
                   }
                 />
                 <Button asChild>
-                  <Link href="/news">
+                  <Link href="/events">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    More Articles
+                    More Events
                   </Link>
                 </Button>
               </div>

@@ -290,7 +290,7 @@ export default function NewsSection() {
                 custom={index}
               >
                 <CardHover>
-                  <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm h-full">
+                  <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm h-full my-0 py-0">
                     <div className="flex h-full">
                       <div className="relative w-24 flex-shrink-0 overflow-hidden">
                         <Image

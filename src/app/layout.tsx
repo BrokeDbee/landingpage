@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Navigation from "@/components/layout/navigation";
 import Footer from "@/components/layout/footer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Navigation />
           <div className="mt-20">{children}</div>
           <Footer />
+          <Toaster />
         </main>
         <Analytics />
       </body>
