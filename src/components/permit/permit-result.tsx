@@ -13,16 +13,17 @@ import {
 import Image from "next/image";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { PermitResponse, StudentData, FormData } from "@/lib/types";
+import { PermitResponse } from "@/lib/types/common";
 import { useRouter } from "next/navigation";
+import { Student } from "@prisma/client";
 
 interface PermitResultProps {
   isLoading: boolean;
   permitResponse: PermitResponse | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setStudentIdInput: React.Dispatch<React.SetStateAction<string>>;
-  setStudentData: React.Dispatch<React.SetStateAction<StudentData | null>>;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  setStudentData: React.Dispatch<React.SetStateAction<Student | null>>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<Student>>>;
   setPermitResponse: React.Dispatch<
     React.SetStateAction<PermitResponse | null>
   >;
@@ -208,19 +209,19 @@ export function PermitResult({
             <div class="detail-item">
               <div class="detail-label">Student ID</div>
               <div class="detail-value">${
-                permitResponse.data.student.studentId
+                permitResponse.data.student?.studentId
               }</div>
             </div>
             <div class="detail-item">
               <div class="detail-label">Full Name</div>
               <div class="detail-value">${
-                permitResponse.data.student.name
+                permitResponse.data.student?.name
               }</div>
             </div>
             <div class="detail-item">
               <div class="detail-label">Course of Study</div>
               <div class="detail-value">${
-                permitResponse.data.student.course
+                permitResponse.data.student?.course
               }</div>
             </div>
             <div class="detail-item">

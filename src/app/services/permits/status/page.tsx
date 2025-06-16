@@ -25,7 +25,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { checkPermitStatus, checkStudentStatus } from "@/lib/api";
+import {
+  checkPermitStatus,
+  checkStudentStatus,
+} from "@/lib/api/services/student";
 
 interface PermitStatus {
   valid: boolean;

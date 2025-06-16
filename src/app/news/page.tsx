@@ -26,7 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getNewsArticles, type NewsArticle } from "@/lib/api";
+import { getNewsArticles, type NewsArticle } from "@/lib/api/services/news";
 import { useDebounce } from "@/hooks/use-debounce";
 
 const CATEGORIES = [

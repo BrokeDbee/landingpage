@@ -14,23 +14,13 @@ import Image from "next/image";
 
 const footerLinks = {
   quickLinks: [
-    { name: "About Us", href: "#about" },
-    { name: "News", href: "#news" },
-    { name: "Events", href: "#events" },
-    { name: "Contact", href: "#contact" },
+    { name: "About Us", href: "/about" },
+    { name: "News", href: "/news" },
+    { name: "Events", href: "/events" },
+    { name: "Contact", href: "/contact" },
   ],
-  resources: [
-    { name: "Student Handbook", href: "#handbook" },
-    { name: "Academic Calendar", href: "#calendar" },
-    { name: "Forms & Documents", href: "#forms" },
-    { name: "Help Center", href: "#help" },
-  ],
-  services: [
-    { name: "Exam Permits", href: "#permits" },
-    { name: "Student Welfare", href: "#welfare" },
-    { name: "Grievance Portal", href: "#grievance" },
-    { name: "Feedback", href: "#feedback" },
-  ],
+  resources: [{ name: "Forms & Documents", href: "/documents" }],
+  services: [{ name: "Exam Permits", href: "/services/permits" }],
 };
 
 const socialLinks = [

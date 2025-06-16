@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getArticle } from "@/lib/api";
+import { getArticle } from "@/lib/api/services/news";
 import { format } from "date-fns";
 import { ShareDialog } from "@/components/ui/share-dialog";
 

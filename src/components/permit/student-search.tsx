@@ -4,17 +4,17 @@ import { Search, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { findStudentById } from "@/lib/api";
-import { StudentData, FormData } from "@/lib/types";
+import { findStudentById } from "@/lib/api/services/student";
+import { Student } from "@prisma/client";
 
 interface StudentSearchProps {
   studentIdInput: string;
   setStudentIdInput: React.Dispatch<React.SetStateAction<string>>;
   isSearching: boolean;
   setIsSearching: React.Dispatch<React.SetStateAction<boolean>>;
-  setStudentData: React.Dispatch<React.SetStateAction<StudentData | null>>;
+  setStudentData: React.Dispatch<React.SetStateAction<Student | null>>;
   setSearchError: React.Dispatch<React.SetStateAction<string | null>>;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<Student>>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   searchError: string | null;
 }

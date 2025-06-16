@@ -9,8 +9,8 @@ import {
   RefreshCw,
   X,
 } from "lucide-react";
-import { FormData } from "@/lib/types";
-import { initiatePayment } from "@/lib/api";
+import { initiatePayment } from "@/lib/api/services/payment";
+import { Student } from "@prisma/client";
 
 interface PaymentFormProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -22,7 +22,7 @@ interface PaymentFormProps {
   paymentStatus: "pending" | "success" | "failed" | "idle" | "verifying";
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
-  formData: FormData;
+  formData: Partial<Student>;
 }
 
 interface PaymentError {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,21 @@ const actionItems = [
     color: "from-blue-500 to-blue-600",
   },
 ];
-
 export default function CallToActionSection() {
+  const [particles, setParticles] = useState<
+    { x: number; duration: number; delay: number; left: string; top: string }[]
+  >([]);
+  useEffect(() => {
+    const newParticles = [...Array(15)].map(() => ({
+      x: Math.random() * 50 - 25,
+      duration: Math.random() * 3 + 2,
+      delay: Math.random() * 2,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setParticles(newParticles);
+  }, []);
+
   return (
     <section className="relative py-20 overflow-hidden text-white bg-gradient-to-br from-blue-600 via-orange-600 to-indigo-700">
       {/* Animated background elements */}
@@ -32,42 +46,28 @@ export default function CallToActionSection() {
           }}
           className="absolute w-32 h-32 rounded-full top-10 left-10 bg-white/5"
         />
-        <motion.div
-          animate={{
-            scale: [1.3, 1, 1.3],
-            rotate: [360, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute w-48 h-48 rounded-full bottom-10 right-10 bg-white/5"
-        />
+        {/* Floating particles */}
+        {particles.map((particle, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-white/30"
+            animate={{
+              y: [0, -50, 0],
+              x: [0, particle.x, 0],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: particle.duration,
+              repeat: Infinity,
+              delay: particle.delay,
+            }}
+            style={{
+              left: particle.left,
+              top: particle.top,
+            }}
+          />
+        ))}
       </div>
-
-      {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-white/30"
-          animate={{
-            y: [0, -50, 0],
-            x: [0, Math.random() * 50 - 25, 0],
-            opacity: [0, 1, 0],
-          }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            repeat: Infinity,
-            delay: Math.random() * 2,
-          }}
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-        />
-      ))}
-
       <div className="container relative z-10 px-4 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { User, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FormData } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,8 +22,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface StudentInfoFormProps {
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  formData: Partial<Student>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<Student>>>;
   searchError: string | null;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   studentIdInput: string;
@@ -47,6 +46,7 @@ const Levels = [
 ];
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { Student } from "@prisma/client";
 
 export const studentFormSchema = z.object({
   studentId: z.string().min(1, "Student ID is required"),

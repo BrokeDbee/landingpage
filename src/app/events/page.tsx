@@ -25,9 +25,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getEvents, type Event } from "@/lib/api";
 import { useDebounce } from "@/hooks/use-debounce";
 import { format } from "date-fns";
+import { getEvents, type Event } from "@/lib/api/services/event";
 
 const CATEGORIES = [
   { value: "all", label: "All Categories" },

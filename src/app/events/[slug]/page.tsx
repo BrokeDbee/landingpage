@@ -18,9 +18,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { getEvent } from "@/lib/api";
 import { format } from "date-fns";
 import { ShareDialog } from "@/components/ui/share-dialog";
+import { getEvent } from "@/lib/api/services/event";
 
 export default function EventPage() {
   const params = useParams();

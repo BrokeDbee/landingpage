@@ -79,6 +79,12 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    name: "Documents",
+    href: "/documents",
+    icon: FileText,
+    type: "single",
+  },
+  {
     name: "Contact",
     href: "/contact",
     icon: Phone,

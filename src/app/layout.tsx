@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
           <Navigation />
-          <div className="mt-20">{children}</div>
+          <div className="mt-20 min-h-[calc(80vh)]">{children}</div>
           <Footer />
           <Toaster />
         </main>

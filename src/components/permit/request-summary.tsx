@@ -2,12 +2,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FormData, StudentData } from "@/lib/types";
+import { Student } from "@prisma/client";
 
 interface RequestSummaryProps {
-  formData: FormData;
+  formData: Partial<Student>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  studentData: StudentData | null;
+  studentData: Student | null;
 }
 
 export function RequestSummary({

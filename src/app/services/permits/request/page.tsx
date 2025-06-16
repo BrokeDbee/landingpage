@@ -9,15 +9,15 @@ import { RequestSummary } from "@/components/permit/request-summary";
 import { PaymentForm } from "@/components/permit/payment-form";
 import { PaymentProcessing } from "@/components/permit/payment-processing";
 import { ProgressSteps } from "@/components/permit/progress-steps";
-import { StudentData, FormData } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Student } from "@prisma/client";
 
 export default function PermitRequestPage() {
   const [studentIdInput, setStudentIdInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [studentData, setStudentData] = useState<StudentData | null>(null);
+  const [studentData, setStudentData] = useState<Student | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
@@ -32,7 +32,7 @@ export default function PermitRequestPage() {
   const [paymentStatus, setPaymentStatus] = useState<
     "pending" | "success" | "failed" | "idle" | "verifying"
   >("idle");
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<Partial<Student>>({
     studentId: "",
     name: "",
     email: "",

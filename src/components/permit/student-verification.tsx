@@ -2,13 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, User } from "lucide-react";
 
-import { StudentData, FormData } from "@/lib/types";
 import { Button } from "../ui/button";
+import { Student } from "@prisma/client";
 
 interface StudentVerificationProps {
-  studentData: StudentData | null;
-  formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  studentData: Student | null;
+  formData: Partial<Student>;
+  setFormData: React.Dispatch<React.SetStateAction<Partial<Student>>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 

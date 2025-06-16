@@ -15,11 +15,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { verifyPayment, getPermit } from "@/lib/api";
+import { getPermit } from "@/lib/api/services/student";
 import Image from "next/image";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { PermitResponse } from "@/lib/types";
+import { verifyPayment } from "@/lib/api/services/payment";
+import { PermitResponse } from "@/lib/types/common";
 
 interface PaymentProcessingProps {
   isLoading: boolean;

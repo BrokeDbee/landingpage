@@ -8,13 +8,13 @@ import { Mail, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { subscribeToNewsletter } from "@/lib/api/services/newsletter";
 
 export default function NewsletterSection() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     studentId: "",
-    program: "",
     consent: false,
   });
 
@@ -42,12 +42,20 @@ export default function NewsletterSection() {
     setStatus({ type: "loading", message: "Subscribing..." });
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await subscribeToNewsletter(
+        formData.email,
+        formData.fullName,
+        formData.studentId
+      );
+
+      if (!res.success || !res.data) {
+        throw new Error(res.error || "Subscription failed");
+      }
 
       setStatus({
         type: "success",
-        message: "Thank you for subscribing to our newsletter!",
+        message:
+          "Thank you for subscribing! Please check your email to confirm your subscription.",
       });
 
       // Reset form
@@ -55,7 +63,6 @@ export default function NewsletterSection() {
         fullName: "",
         email: "",
         studentId: "",
-        program: "",
         consent: false,
       });
     } catch (error) {
@@ -150,32 +157,6 @@ export default function NewsletterSection() {
                   required
                   className="w-full h-full  px-6 py-4 text-white border rounded-xl bg-white/10 border-white/20 placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-sm"
                 />
-              </motion.div>
-
-              <motion.div
-                whileFocus={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <select
-                  name="program"
-                  value={formData.program}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-6 py-4 text-white border rounded-xl bg-white/10 border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-sm"
-                >
-                  <option value="" className="text-gray-800">
-                    Select Your Program
-                  </option>
-                  <option value="undergraduate" className="text-gray-800">
-                    Undergraduate
-                  </option>
-                  <option value="graduate" className="text-gray-800">
-                    Graduate
-                  </option>
-                  <option value="phd" className="text-gray-800">
-                    PhD
-                  </option>
-                </select>
               </motion.div>
             </div>
 

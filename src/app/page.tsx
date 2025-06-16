@@ -4,11 +4,11 @@ import VisionMissionSection from "@/components/sections/vision-mission-section";
 import NewsSection from "@/components/sections/news-section";
 import EventsSection from "@/components/sections/events-section";
 import ExecutivesSection from "@/components/sections/executives-section";
-import CallToActionSection from "@/components/sections/call-to-action-section";
 import NewsletterSection from "@/components/sections/newsletter-section";
 import MemoryGameSection from "@/components/sections/memory-game-section";
 import QuickPermitCard from "@/components/sections/quick-permit-card";
 import QueryProvider from "@/providers/query-provider";
+import IdeaSubmissionSection from "@/components/idea/idea-submission-section";
 
 export default function Home() {
   return (
@@ -26,7 +26,7 @@ export default function Home() {
         <EventsSection />
       </QueryProvider>
       <ExecutivesSection />
-      <CallToActionSection />
+      <IdeaSubmissionSection />
       <MemoryGameSection />
       <NewsletterSection />
     </div>

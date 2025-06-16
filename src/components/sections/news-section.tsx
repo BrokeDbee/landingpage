@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getFeaturedArticles, NewsArticle } from "@/lib/api";
+import { getFeaturedArticles, NewsArticle } from "@/lib/api/services/news";
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
