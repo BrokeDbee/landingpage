@@ -1,18 +1,23 @@
 "use server";
 import { api } from "@/lib/api/config";
 import { ServiceResponse } from "@/lib/types/common";
+interface SocialLinks {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    tiktok?: string;
+    youtube?: string;
+    linkedin?: string;
+    [key: string]: string | undefined;
+}
 
 export interface PublicConfig {
-    appName: string;
-    appDescription: string | null;
-    appLogo: string | null;
-    appFavicon: string | null;
-    socialLinks: Record<string, string> | null;
     contactInfo: {
         email: string | null;
         phone: string | null;
         address: string | null;
         website: string | null;
+        socialLinks: SocialLinks | null;
     } | null;
     semesterConfig: {
         currentSemester: string;

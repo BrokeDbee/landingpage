@@ -1,25 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-import { getPublicConfig } from "@/lib/api/services/config";
 import {
-  Users,
   Target,
   Award,
   Heart,
   Shield,
   Lightbulb,
   Calendar,
+  Users,
 } from "lucide-react";
 
 export default function AboutPage() {
-  const { data: config } = useQuery({
-    queryKey: ["public-config"],
-    queryFn: getPublicConfig,
-    staleTime: 5 * 60 * 1000,
-  });
-
   const stats = [
     { icon: Users, value: "5000+", label: "Students Represented" },
     { icon: Calendar, value: "50+", label: "Events Organized" },
@@ -31,22 +23,26 @@ export default function AboutPage() {
     {
       icon: Shield,
       title: "Integrity",
-      description: "We uphold the highest standards of honesty and ethical behavior in all our actions.",
+      description:
+        "We uphold the highest standards of honesty and ethical behavior in all our actions.",
     },
     {
       icon: Users,
       title: "Inclusivity",
-      description: "We ensure every student's voice is heard and represented regardless of background.",
+      description:
+        "We ensure every student's voice is heard and represented regardless of background.",
     },
     {
       icon: Lightbulb,
       title: "Innovation",
-      description: "We embrace new ideas and creative solutions to address student needs.",
+      description:
+        "We embrace new ideas and creative solutions to address student needs.",
     },
     {
       icon: Heart,
       title: "Service",
-      description: "We are committed to serving the student body with dedication and compassion.",
+      description:
+        "We are committed to serving the student body with dedication and compassion.",
     },
   ];
 
@@ -54,22 +50,26 @@ export default function AboutPage() {
     {
       year: "2008",
       title: "Foundation",
-      description: "SRC was established to represent student interests and concerns.",
+      description:
+        "SRC was established to represent student interests and concerns.",
     },
     {
       year: "2015",
       title: "Digital Transformation",
-      description: "Launched online platforms for better student engagement and communication.",
+      description:
+        "Launched online platforms for better student engagement and communication.",
     },
     {
       year: "2020",
       title: "Expanded Services",
-      description: "Introduced comprehensive permit system and enhanced student support services.",
+      description:
+        "Introduced comprehensive permit system and enhanced student support services.",
     },
     {
       year: "2024",
       title: "Future Forward",
-      description: "Continuing to innovate and serve students with modern solutions and approaches.",
+      description:
+        "Continuing to innovate and serve students with modern solutions and approaches.",
     },
   ];
 
@@ -85,11 +85,12 @@ export default function AboutPage() {
             className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              About {config?.data?.appName || "KNUST SRC"}
+              About KNUST SRC
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto">
-              Empowering students, building community, and creating positive change
-              on campus through dedicated leadership and innovative solutions.
+              Empowering students, building community, and creating positive
+              change on campus through dedicated leadership and innovative
+              solutions.
             </p>
           </motion.div>
         </div>
@@ -109,10 +110,10 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-800">Our Mission</h2>
             </div>
             <p className="text-lg text-gray-600 leading-relaxed">
-              To serve as the primary voice of the student body, advocating for their
-              rights, interests, and welfare while fostering a vibrant, inclusive,
-              and supportive campus community that promotes academic excellence and
-              personal growth.
+              To serve as the primary voice of the student body, advocating for
+              their rights, interests, and welfare while fostering a vibrant,
+              inclusive, and supportive campus community that promotes academic
+              excellence and personal growth.
             </p>
           </motion.div>
 
@@ -151,7 +152,9 @@ export default function AboutPage() {
               className="text-center bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
             >
               <stat.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <div className="text-3xl font-bold text-gray-800 mb-2">{stat.value}</div>
+              <div className="text-3xl font-bold text-gray-800 mb-2">
+                {stat.value}
+              </div>
               <div className="text-gray-600">{stat.label}</div>
             </motion.div>
           ))}
@@ -177,7 +180,9 @@ export default function AboutPage() {
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
               >
                 <value.icon className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">{value.title}</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                  {value.title}
+                </h3>
                 <p className="text-gray-600">{value.description}</p>
               </motion.div>
             ))}
@@ -197,7 +202,7 @@ export default function AboutPage() {
           <div className="relative">
             {/* Timeline line */}
             <div className="absolute left-1/2 transform -translate-x-px h-full w-1 bg-blue-200"></div>
-            
+
             <div className="space-y-12">
               {timeline.map((item, index) => (
                 <motion.div
@@ -209,17 +214,25 @@ export default function AboutPage() {
                     index % 2 === 0 ? "flex-row" : "flex-row-reverse"
                   }`}
                 >
-                  <div className={`w-1/2 ${index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"}`}>
+                  <div
+                    className={`w-1/2 ${
+                      index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"
+                    }`}
+                  >
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                      <div className="text-2xl font-bold text-blue-600 mb-2">{item.year}</div>
-                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
+                      <div className="text-2xl font-bold text-blue-600 mb-2">
+                        {item.year}
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                        {item.title}
+                      </h3>
                       <p className="text-gray-600">{item.description}</p>
                     </div>
                   </div>
-                  
+
                   {/* Timeline dot */}
                   <div className="w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-md"></div>
-                  
+
                   <div className="w-1/2"></div>
                 </motion.div>
               ))}
@@ -234,33 +247,31 @@ export default function AboutPage() {
           transition={{ duration: 0.6, delay: 1.8 }}
           className="bg-white p-8 rounded-lg shadow-lg"
         >
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            Who We Are
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">Who We Are</h2>
           <div className="prose prose-lg text-gray-600 max-w-none">
             <p className="mb-6">
-              The Student Representative Council (SRC) is the official student government
-              body that represents the interests and concerns of all students at
-              {config?.data?.appName || "Knutsford University"}. We serve as the bridge
-              between students and the university administration, ensuring that student
+              The Student Representative Council (SRC) is the official student
+              government body that represents the interests and concerns of all
+              students at Knutsford University. We serve as the bridge between
+              students and the university administration, ensuring that student
               voices are heard and their needs are addressed.
             </p>
             <p className="mb-6">
-              Our organization is committed to fostering a positive campus environment
-              where students can thrive academically, socially, and personally. We
-              organize events, provide support services, and advocate for policies
-              that benefit the entire student community.
+              Our organization is committed to fostering a positive campus
+              environment where students can thrive academically, socially, and
+              personally. We organize events, provide support services, and
+              advocate for policies that benefit the entire student community.
             </p>
             <p>
-              Through our dedicated team of elected representatives and appointed
-              officials, we work tirelessly to improve student life, enhance campus
-              facilities, and create opportunities for personal and professional
-              development. Our commitment to excellence and student welfare drives
-              everything we do.
+              Through our dedicated team of elected representatives and
+              appointed officials, we work tirelessly to improve student life,
+              enhance campus facilities, and create opportunities for personal
+              and professional development. Our commitment to excellence and
+              student welfare drives everything we do.
             </p>
           </div>
         </motion.div>
       </div>
     </div>
   );
-} 
+}

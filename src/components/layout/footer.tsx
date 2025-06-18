@@ -1,20 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Mail,
-  Phone,
-  MapPin,
-  Heart,
-  Linkedin,
-  Youtube,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Heart } from "lucide-react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicConfig } from "@/lib/api/services/config";
+import TikTok from "../icons/tiktok";
+import Facebook from "../icons/facebook";
+import Twitter from "../icons/twitter";
+import Instagram from "../icons/instagram";
+import Linkedin from "../icons/linkdin";
+import Youtube from "../icons/youtube";
 
 const footerLinks = {
   quickLinks: [
@@ -34,6 +30,7 @@ const socialIcons = {
   instagram: Instagram,
   linkedin: Linkedin,
   youtube: Youtube,
+  tiktok: TikTok,
 };
 
 const socialColors = {
@@ -51,18 +48,22 @@ export default function Footer() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
+  console.log(config);
+
   // Generate social links from config
-  const socialLinks = config?.data?.socialLinks
-    ? Object.entries(config.data.socialLinks).map(([platform, url]) => {
-        const Icon = socialIcons[platform as keyof typeof socialIcons];
-        const color = socialColors[platform as keyof typeof socialColors];
-        return {
-          icon: Icon,
-          href: url,
-          label: platform.charAt(0).toUpperCase() + platform.slice(1),
-          color: color || "hover:text-gray-400",
-        };
-      })
+  const socialLinks = config?.data?.contactInfo?.socialLinks
+    ? Object.entries(config.data?.contactInfo.socialLinks).map(
+        ([platform, url]) => {
+          const Icon = socialIcons[platform as keyof typeof socialIcons];
+          const color = socialColors[platform as keyof typeof socialColors];
+          return {
+            icon: Icon,
+            href: url,
+            label: platform.charAt(0).toUpperCase() + platform.slice(1),
+            color: color || "hover:text-gray-400",
+          };
+        }
+      )
     : [];
 
   // Generate contact info from config
@@ -149,15 +150,15 @@ export default function Footer() {
               >
                 <div className="flex items-center space-x-3 mb-4">
                   <Image
-                    src={config?.data?.appLogo || "/manifest/android-chrome-512x512.png"}
-                    alt={config?.data?.appName || "Knutsford University Logo"}
+                    src={"/manifest/android-chrome-512x512.png"}
+                    alt={"Knutsford University Logo"}
                     width={50}
                     height={50}
                     className=""
                   />
                   <div>
                     <h3 className="text-2xl font-bold">
-                      {config?.data?.appName || "Knutsford University SRC"}
+                      {"Knutsford University SRC"}
                     </h3>
                     <p className="text-blue-200">
                       Student Representative Council
@@ -165,8 +166,9 @@ export default function Footer() {
                   </div>
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  {config?.data?.appDescription ||
-                    "Your voice matters. Together we make a difference. Empowering students, building community, and creating positive change on campus."}
+                  Your voice matters. Together we make a difference. Empowering
+                  students, building community, and creating positive change on
+                  campus.
                 </p>
               </motion.div>
 
@@ -299,7 +301,11 @@ export default function Footer() {
                       className={`w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 ${social.color}`}
                       aria-label={social.label}
                     >
-                      <social.icon className="w-6 h-6" />
+                      <social.icon
+                        className="w-6 h-6"
+                        aria-hidden="true"
+                        style={{ color: "red" }}
+                      />
                     </motion.a>
                   ))}
                 </div>

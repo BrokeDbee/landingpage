@@ -10,60 +10,38 @@ datasource db {
 model User {
   id                  Int             @id @default(autoincrement())
   username            String          @unique
+  name                String          @default("")
   email               String          @unique
-  password            String
+  image               String? // URL to user profile image
+  password            String // Hashed password
+  role                Role            @relation(fields: [roleId], references: [id])
   roleId              Int
+  position            String? // Executive position/title
+  positionDescription String?         @db.Text // Short summary of role
+  biography           String?         @db.Text // User profile
+  socialLinks         Json? // Social media links stored as JSON
+  category            String? // Classification (main_executive, other_executive, all_present)
+  index               Int             @default(0) // For custom ordering
+  published           Boolean         @default(true) // To control visibility
+  permits             Permit[] // Permits issued by this user
+  auditLogs           AuditLog[]
+  recoveryTokens      RecoveryToken[]
+  newsArticles        NewsArticle[] // News articles written by this user
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
-  biography           String?         @db.Text
-  category            String?
-  position            String?
-  positionDescription String?         @db.Text
-  socialLinks         Json?
-  name                String          @default("")
-  image               String?
-  index               Int             @default(0)
-  published           Boolean         @default(true)
-  auditLogs           AuditLog[]
-  Document            Document[]
   Event               Event[]
-  newsArticles        NewsArticle[]
   Newsletter          Newsletter[]
-  permits             Permit[]
-  recoveryTokens      RecoveryToken[]
+  Document            Document[]
   StudentIdea         StudentIdea[]
-  role                Role            @relation(fields: [roleId], references: [id])
-
-  @@index([roleId], map: "User_roleId_fkey")
 }
 
 model Role {
-  id          Int              @id @default(autoincrement())
-  name        String           @unique
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
   description String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  permissions RolePermission[]
   users       User[]
-}
-
-model Permission {
-  id          Int              @id @default(autoincrement())
-  name        String           @unique
-  description String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  roles       RolePermission[]
-}
-
-model RolePermission {
-  roleId       Int
-  permissionId Int
-  permission   Permission @relation(fields: [permissionId], references: [id])
-  role         Role       @relation(fields: [roleId], references: [id])
-
-  @@id([roleId, permissionId])
-  @@index([permissionId], map: "RolePermission_permissionId_fkey")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Student {
@@ -74,228 +52,63 @@ model Student {
   course      String
   level       String
   number      String
+  permits     Permit[] // Permits issued to this student
+  payments    Payment[] // Payments made by this student
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  payments    Payment[]
-  permits     Permit[]
+  deletedAt   DateTime? // Soft delete
   StudentIdea StudentIdea[]
 }
 
 model Permit {
   id           Int      @id @default(autoincrement())
-  permitCode   String   @unique
-  originalCode String   @unique
-  status       String   @default("active")
+  permitCode   String   @unique // Hashed permit code
+  originalCode String   @unique // Original permit code
+  status       String   @default("active") // active, revoked, expired
   startDate    DateTime @default(now())
   expiryDate   DateTime
   amountPaid   Float
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId    Int
+  issuedBy     User?    @relation(fields: [issuedById], references: [id])
   issuedById   Int?
+  payment      Payment? // Payment record for this permit
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  payment      Payment?
-  issuedBy     User?    @relation(fields: [issuedById], references: [id])
-  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-
-  @@index([issuedById], map: "Permit_issuedById_fkey")
-  @@index([studentId], map: "Permit_studentId_fkey")
 }
 
 model AuditLog {
   id        Int      @id @default(autoincrement())
   action    String
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
   details   String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "AuditLog_userId_fkey")
 }
 
 model RecoveryToken {
   id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
   token     String   @unique
   expires   DateTime
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "RecoveryToken_userId_fkey")
 }
 
 model Payment {
   id               Int           @id @default(autoincrement())
+  student          Student       @relation(fields: [studentId], references: [id])
   studentId        Int
   amount           Float
   currency         String        @default("GHS")
   paymentReference String        @unique
   paystackRef      String?       @unique
   status           PaymentStatus @default(PENDING)
+  permit           Permit?       @relation(fields: [permitId], references: [id])
   permitId         Int?          @unique
   metadata         Json?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
-  permit           Permit?       @relation(fields: [permitId], references: [id])
-  student          Student       @relation(fields: [studentId], references: [id])
-
-  @@index([studentId], map: "Payment_studentId_fkey")
-}
-
-model NewsArticle {
-  id            Int       @id @default(autoincrement())
-  title         String
-  slug          String    @unique
-  content       String    @db.Text
-  excerpt       String    @db.Text
-  image         String
-  category      String
-  categoryColor String
-  featured      Boolean   @default(false)
-  published     Boolean   @default(false)
-  publishedAt   DateTime?
-  authorId      Int
-  readTime      String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  author        User      @relation(fields: [authorId], references: [id])
-
-  @@index([authorId], map: "NewsArticle_authorId_fkey")
-}
-
-model Event {
-  id               Int       @id @default(autoincrement())
-  title            String
-  slug             String    @unique
-  description      String    @db.Text
-  excerpt          String    @db.Text
-  image            String
-  date             DateTime
-  time             String
-  location         String
-  category         String
-  categoryColor    String
-  featured         Boolean   @default(false)
-  published        Boolean   @default(false)
-  publishedAt      DateTime?
-  maxAttendees     Int       @default(0)
-  currentAttendees Int       @default(0)
-  organizerId      Int
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  organizer        User      @relation(fields: [organizerId], references: [id])
-
-  @@index([organizerId], map: "Event_organizerId_fkey")
-}
-
-model Config {
-  id             Int             @id @default(autoincrement())
-  appName        String          @default("KNUST SRC Permit System")
-  appDescription String?         @db.Text
-  appLogo        String?
-  appFavicon     String?
-  socialLinks    Json?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  contactInfo    ContactInfo?
-  permitConfig   PermitConfig?
-  semesterConfig SemesterConfig?
-}
-
-model ContactInfo {
-  id        Int      @id @default(autoincrement())
-  email     String?
-  phone     String?
-  address   String?  @db.Text
-  website   String?
-  configId  Int      @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  config    Config   @relation(fields: [configId], references: [id])
-}
-
-model SemesterConfig {
-  id              Int      @id @default(autoincrement())
-  currentSemester String
-  academicYear    String
-  startDate       DateTime
-  endDate         DateTime
-  isActive        Boolean  @default(true)
-  configId        Int      @unique
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  config          Config   @relation(fields: [configId], references: [id])
-}
-
-model PermitConfig {
-  id             Int      @id @default(autoincrement())
-  expirationDate DateTime @default(now())
-  defaultAmount  Float    @default(0)
-  currency       String   @default("GHS")
-  configId       Int      @unique
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  config         Config   @relation(fields: [configId], references: [id])
-}
-
-model NewsletterSubscriber {
-  id        Int                @id @default(autoincrement())
-  email     String             @unique
-  name      String?
-  studentId Int
-  status    SubscriptionStatus @default(PENDING)
-  token     String             @unique
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-}
-
-model Newsletter {
-  id        Int              @id @default(autoincrement())
-  title     String
-  content   String           @db.Text
-  status    NewsletterStatus @default(DRAFT)
-  sentAt    DateTime?
-  sentById  Int
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  sentBy    User             @relation(fields: [sentById], references: [id])
-
-  @@index([sentById], map: "Newsletter_sentById_fkey")
-}
-
-model Document {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String?  @db.Text
-  category     String
-  fileUrl      String
-  fileType     String
-  fileSize     Int
-  downloads    Int      @default(0)
-  isPublic     Boolean  @default(true)
-  uploadedById Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
-
-  @@index([uploadedById], map: "Document_uploadedById_fkey")
-}
-
-model StudentIdea {
-  id           Int        @id @default(autoincrement())
-  title        String
-  description  String     @db.Text
-  category     String
-  status       IdeaStatus @default(PENDING)
-  studentId    Int
-  reviewedById Int?
-  reviewNotes  String?    @db.Text
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  reviewedBy   User?      @relation(fields: [reviewedById], references: [id])
-  student      Student    @relation(fields: [studentId], references: [id])
-
-  @@index([reviewedById], map: "StudentIdea_reviewedById_fkey")
-  @@index([studentId], map: "StudentIdea_studentId_fkey")
 }
 
 enum PaymentStatus {
@@ -305,10 +118,121 @@ enum PaymentStatus {
   CANCELLED
 }
 
+model NewsArticle {
+  id            Int       @id @default(autoincrement())
+  title         String
+  slug          String    @unique
+  content       String    @db.Text
+  excerpt       String    @db.Text
+  image         String // Cloudinary URL
+  category      String // News category (e.g., "Announcements", "Updates", "Education", "Academic")
+  categoryColor String // Tailwind classes
+  featured      Boolean   @default(false)
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  author        User      @relation(fields: [authorId], references: [id])
+  authorId      Int
+  readTime      String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Event {
+  id               Int       @id @default(autoincrement())
+  title            String
+  slug             String    @unique
+  description      String    @db.Text
+  excerpt          String    @db.Text
+  image            String // Cloudinary URL
+  date             DateTime
+  time             String // Store time as string (e.g., "14:00")
+  location         String
+  category         String // Event category (e.g., "Academic", "Social", "Sports", "Cultural")
+  categoryColor    String // Tailwind classes
+  featured         Boolean   @default(false)
+  published        Boolean   @default(false)
+  publishedAt      DateTime?
+  maxAttendees     Int       @default(0)
+  currentAttendees Int       @default(0)
+  organizer        User      @relation(fields: [organizerId], references: [id])
+  organizerId      Int
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Config {
+  id             Int             @id @default(autoincrement())
+  contactInfo    ContactInfo?
+  semesterConfig SemesterConfig?
+  permitConfig   PermitConfig?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model ContactInfo {
+  id          Int      @id @default(autoincrement())
+  email       String?
+  phone       String?
+  address     String?  @db.Text
+  website     String?
+  config      Config   @relation(fields: [configId], references: [id])
+  socialLinks Json? // Social media links
+  configId    Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SemesterConfig {
+  id              Int      @id @default(autoincrement())
+  currentSemester String // e.g., "2023/2024"
+  academicYear    String // e.g., "2023/2024"
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean  @default(true)
+  config          Config   @relation(fields: [configId], references: [id])
+  configId        Int      @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PermitConfig {
+  id             Int      @id @default(autoincrement())
+  expirationDate DateTime @default(now())
+  defaultAmount  Float    @default(0.0)
+  currency       String   @default("GHS")
+  config         Config   @relation(fields: [configId], references: [id])
+  configId       Int      @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        Int                @id @default(autoincrement())
+  email     String             @unique
+  name      String?
+  studentId Int
+  status    SubscriptionStatus @default(PENDING)
+  token     String             @unique // For email verification
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
 enum SubscriptionStatus {
   PENDING
   ACTIVE
   UNSUBSCRIBED
+}
+
+model Newsletter {
+  id        Int              @id @default(autoincrement())
+  title     String
+  content   String           @db.Text
+  status    NewsletterStatus @default(DRAFT)
+  sentAt    DateTime?
+  sentBy    User             @relation(fields: [sentById], references: [id])
+  sentById  Int
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 enum NewsletterStatus {
@@ -316,6 +240,37 @@ enum NewsletterStatus {
   SCHEDULED
   SENT
   FAILED
+}
+
+model Document {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?  @db.Text
+  category     String // e.g., "Academic", "Student Life", "Administrative"
+  fileUrl      String // Cloudinary URL
+  fileType     String // e.g., "pdf", "doc", "docx"
+  fileSize     Int // Size in bytes
+  downloads    Int      @default(0)
+  isPublic     Boolean  @default(true)
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  uploadedById Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model StudentIdea {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String     @db.Text
+  category     String // e.g., "Academic", "Student Life", "Administrative"
+  status       IdeaStatus @default(PENDING)
+  student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId    Int
+  reviewedBy   User?      @relation(fields: [reviewedById], references: [id])
+  reviewedById Int?
+  reviewNotes  String?    @db.Text
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 enum IdeaStatus {
