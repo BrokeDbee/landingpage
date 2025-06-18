@@ -6,17 +6,9 @@ import { DocumentWithRelations } from "@/lib/api/services/documents";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import Image from "next/image";
 
 // Dynamically import DocViewer to avoid SSR issues
-const DocViewer = dynamic(() => import("react-doc-viewer"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[80vh] flex items-center justify-center">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-orange-500"></div>
-    </div>
-  ),
-});
 
 export default function DocumentViewerClient({
   params,
@@ -26,6 +18,14 @@ export default function DocumentViewerClient({
   const [document, setDocument] = useState<DocumentWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   // const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const isImageFile = document?.fileType.startsWith("image/");
+  const isPdfFile = document?.fileType === "application/pdf";
+  const isDocFile =
+    document?.fileType === "application/msword" ||
+    document?.fileType ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+  const canPreview = isImageFile || isPdfFile || isDocFile;
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -107,19 +107,42 @@ export default function DocumentViewerClient({
         </div>
 
         <div className="w-full h-[80vh] rounded-lg overflow-hidden border border-slate-800 bg-slate-900">
-          <DocViewer
-            documents={[{ uri: document.fileUrl }]}
-            theme={{
-              primary: "#f97316",
-              secondary: "#1e293b",
-              tertiary: "#0f172a",
-              text_primary: "#ffffff",
-              text_secondary: "#94a3b8",
-              text_tertiary: "#475569",
-              disableThemeScrollbar: false,
-            }}
-            style={{ height: "100%" }}
-          />
+          {canPreview && (
+            <div className="w-full h-full flex items-center justify-center ">
+              {isImageFile && (
+                <Image
+                  src={document.fileUrl}
+                  alt={document.title}
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                />
+              )}
+              {isPdfFile && (
+                <object
+                  data={document.fileUrl}
+                  type="application/pdf"
+                  className="w-full h-[70vh] border rounded"
+                >
+                  <p>
+                    Alternative text - include a link{" "}
+                    <a href={document.fileUrl}>to the PDF!</a>
+                  </p>
+                </object>
+              )}
+              {isDocFile && (
+                <div className="w-full h-full">
+                  <iframe
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(
+                      document.fileUrl
+                    )}&embedded=true`}
+                    className="w-full h-[70vh] border rounded"
+                    title="Document Preview"
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

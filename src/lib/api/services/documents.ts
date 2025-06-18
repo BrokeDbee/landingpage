@@ -46,7 +46,8 @@ export const getDocumentById = async (id: number): Promise<ServiceResponse<Docum
     try {
         const response = await api.get(`/api/documents/${id}`);
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        console.log("Error fetching document by ID:", error.response.data);
         console.error("Error fetching document by ID:", error);
         return { success: false, error: "Internal server error" };
     }
@@ -54,18 +55,18 @@ export const getDocumentById = async (id: number): Promise<ServiceResponse<Docum
 
 
 export const downloadDocument = async (id: number): Promise<string | null> => {
-  try {
-    const response = await api.get(`/api/documents/${id}/download`, {
-      responseType: "blob",
-    })
+    try {
+        const response = await api.get(`/api/documents/${id}/download`, {
+            responseType: "blob",
+        })
 
-    // Create blob URL for download
-    const blob = new Blob([response.data])
-    const downloadUrl = window.URL.createObjectURL(blob)
+        // Create blob URL for download
+        const blob = new Blob([response.data])
+        const downloadUrl = window.URL.createObjectURL(blob)
 
-    return downloadUrl
-  } catch (error) {
-    console.error("Error downloading document:", error)
-    return null
-  }
+        return downloadUrl
+    } catch (error) {
+        console.error("Error downloading document:", error)
+        return null
+    }
 }

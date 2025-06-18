@@ -4,67 +4,88 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, ExternalLink } from "lucide-react";
-import dynamic from "next/dynamic";
 import { DocumentWithRelations } from "@/lib/api/services/documents";
-
-// Dynamically import DocViewer to avoid SSR issues
-const DocViewer = dynamic(() => import("react-doc-viewer"), {
-  ssr: false,
-  loading: () => <DocumentPreviewLoading />,
-});
+import Image from "next/image";
 
 interface DocumentPreviewProps {
   document: DocumentWithRelations;
 }
 
 export function DocumentPreview({ document }: DocumentPreviewProps) {
-  const [previewError] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const isImageFile = document?.fileType.startsWith("image/");
+  const isPdfFile = document?.fileType === "application/pdf";
+  const isDocFile =
+    document?.fileType === "application/msword" ||
+    document?.fileType ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-  // Check if file type is supported for preview
-  const supportedTypes = [
-    "pdf",
-    "doc",
-    "docx",
-    "txt",
-    "jpg",
-    "jpeg",
-    "png",
-    "gif",
-  ];
-  const fileExtension = document.fileType.toLowerCase();
-  const isPreviewSupported = supportedTypes.includes(fileExtension);
+  const canPreview = isImageFile || isPdfFile || isDocFile;
 
-  if (!isPreviewSupported || previewError) {
+  if (!canPreview || previewError) {
     return <UnsupportedPreview document={document} />;
   }
 
   return (
     <Card className="bg-white border-gray-200 shadow-sm overflow-hidden">
       <CardContent className="p-0">
-        <div className="h-[80vh] w-full">
-          <DocViewer
-            documents={[{ uri: document.fileUrl, fileType: "pdf" }]}
-            theme={{
-              primary: "#f97316",
-              secondary: "#f8fafc",
-              tertiary: "#ffffff",
-              text_primary: "#1f2937",
-              text_secondary: "#4b5563",
-              text_tertiary: "#6b7280",
-              disableThemeScrollbar: false,
-            }}
-            style={{
-              height: "100%",
-              backgroundColor: "#ffffff",
-            }}
-            config={{
-              header: {
-                disableHeader: false,
-                disableFileName: false,
-                retainURLParams: false,
-              },
-            }}
-          />
+        <div className="h-[80vh] w-full relative">
+          {loading && <DocumentPreviewLoading />}
+
+          <div
+            className={`absolute top-0 left-0 w-full h-full flex items-center justify-center transition-opacity duration-300 ${
+              loading ? "opacity-0 pointer-events-none" : "opacity-100"
+            }`}
+          >
+            {isImageFile && (
+              <Image
+                src={document.fileUrl}
+                alt={document.title}
+                width={800}
+                height={600}
+                onLoad={() => setLoading(false)}
+                onError={() => {
+                  setPreviewError(true);
+                  setLoading(false);
+                }}
+                className="w-full h-auto"
+              />
+            )}
+
+            {isPdfFile && (
+              <object
+                data={document.fileUrl}
+                type="application/pdf"
+                className="w-full h-[70vh] border rounded"
+                onLoad={() => setLoading(false)}
+                onError={() => {
+                  setPreviewError(true);
+                  setLoading(false);
+                }}
+              >
+                <p>
+                  Alternative text - include a link{" "}
+                  <a href={document.fileUrl}>to the PDF!</a>
+                </p>
+              </object>
+            )}
+
+            {isDocFile && (
+              <iframe
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(
+                  document.fileUrl
+                )}&embedded=true`}
+                className="w-full h-[70vh] border rounded"
+                onLoad={() => setLoading(false)}
+                onError={() => {
+                  setPreviewError(true);
+                  setLoading(false);
+                }}
+                title="Document Preview"
+              />
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

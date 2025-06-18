@@ -165,6 +165,13 @@ export function DocumentViewer({ documentId }: DocumentViewerProps) {
               <Badge
                 variant="secondary"
                 className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+                style={{
+                  textTransform: "uppercase",
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.5rem",
+                  whiteSpace: "pre-wrap",
+                  overflowWrap: "break-word",
+                }}
               >
                 {document.fileType.toUpperCase()}
               </Badge>

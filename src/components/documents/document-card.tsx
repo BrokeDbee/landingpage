@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Eye, Calendar, User } from "lucide-react";
@@ -30,10 +30,19 @@ export function DocumentCard({ document }: DocumentCardProps) {
     });
   };
 
+  // Format file type to prevent overflow and ensure consistency
+  const formatFileType = (fileType: string) => {
+    const maxLength = 10; // Maximum length for file type display
+    const normalizedType = fileType.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return normalizedType.length > maxLength 
+      ? `${normalizedType.substring(0, maxLength)}...`
+      : normalizedType;
+  };
+
   return (
     <Card className="group h-full bg-white border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-orange-200">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between relative max-w-full">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="p-2 rounded-lg bg-orange-50 text-orange-600 shrink-0">
               <FileText className="h-5 w-5" />
@@ -42,35 +51,35 @@ export function DocumentCard({ document }: DocumentCardProps) {
               <h3 className="font-semibold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
                 {document.title}
               </h3>
-              <p className="text-sm text-gray-500 truncate">
-                {formatFileSize(document.fileSize)} •{" "}
-                {document.fileType.toUpperCase()}
+              <p
+                className="text-sm text-gray-500 flex items-center gap-1"
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <span>{formatFileSize(document.fileSize)}</span>
+                <span>•</span>
+                <span className="inline-block max-w-[100px] truncate">
+                  {formatFileType(document.fileType)}
+                </span>
               </p>
             </div>
           </div>
-          {document.isPublic && (
-            <Badge
-              variant="secondary"
-              className="bg-green-50 text-green-700 border-green-200 shrink-0"
-            >
-              Public
-            </Badge>
-          )}
+        
         </div>
       </CardHeader>
 
       <CardContent className="pt-0 space-y-4">
-        {/* Description */}
         <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">
           {document.description || "No description available"}
         </p>
 
-        {/* Category */}
         <Badge variant="outline" className="w-fit">
           {document.category}
         </Badge>
 
-        {/* Metadata */}
         <div className="space-y-2 text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
@@ -86,7 +95,6 @@ export function DocumentCard({ document }: DocumentCardProps) {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-2 pt-2">
           <Link href={`/documents/${document.id}`} className="flex-1">
             <Button

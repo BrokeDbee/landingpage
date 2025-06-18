@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Play, Users, Star, BookOpen, Award } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Users, Star, BookOpen, Award, Play } from "lucide-react";
 import Image from "next/image";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const floatingCards = [
   {
@@ -68,8 +69,9 @@ export default function HeroSection() {
                   <Button
                     size="lg"
                     className="px-8 py-4 text-lg font-semibold text-white bg-red-500 rounded-full shadow-lg hover:bg-red-600"
+                    asChild
                   >
-                    Get Involved
+                    <Link href="/services/permit">Get Permit</Link>
                   </Button>
                 </motion.div>
 

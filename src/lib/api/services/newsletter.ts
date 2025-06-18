@@ -29,3 +29,13 @@ export const confirmNewsletterSubscription = async (token: string): Promise<Serv
     }
 };
 
+
+export const unsubscribeFromNewsletter = async (email: string): Promise<ServiceResponse<{ message: string }>> => {
+    try {
+        const response = await api.post('/api/newsletter/unsubscribe', { email });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error unsubscribing from newsletter:", error);
+        return { success: false, error: error.response?.data?.error || "Unsubscription failed" };
+    }
+};
