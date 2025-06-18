@@ -9,8 +9,12 @@ import {
   Phone,
   MapPin,
   Heart,
+  Linkedin,
+  Youtube,
 } from "lucide-react";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { getPublicConfig } from "@/lib/api/services/config";
 
 const footerLinks = {
   quickLinks: [
@@ -23,42 +27,85 @@ const footerLinks = {
   services: [{ name: "Exam Permits", href: "/services/permits" }],
 };
 
-const socialLinks = [
-  {
-    icon: Facebook,
-    href: "https://facebook.com",
-    label: "Facebook",
-    color: "hover:text-blue-600",
-  },
-  {
-    icon: Twitter,
-    href: "https://twitter.com",
-    label: "Twitter",
-    color: "hover:text-blue-400",
-  },
-  {
-    icon: Instagram,
-    href: "https://instagram.com",
-    label: "Instagram",
-    color: "hover:text-pink-600",
-  },
-];
+// Social media icon mapping
+const socialIcons = {
+  facebook: Facebook,
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+};
 
-const contactInfo = [
-  {
-    icon: Mail,
-    text: "src@knutsford.edu.gh",
-    href: "mailto:src@knutsford.edu.gh",
-  },
-  { icon: Phone, text: "+233 XX XXX XXXX", href: "tel:+233XXXXXXXX" },
-  {
-    icon: MapPin,
-    text: "Main Campus, Knutsford University",
-    href: "#location",
-  },
-];
+const socialColors = {
+  facebook: "hover:text-blue-600",
+  twitter: "hover:text-blue-400",
+  instagram: "hover:text-pink-600",
+  linkedin: "hover:text-blue-700",
+  youtube: "hover:text-red-600",
+};
 
 export default function Footer() {
+  const { data: config } = useQuery({
+    queryKey: ["public-config"],
+    queryFn: getPublicConfig,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Generate social links from config
+  const socialLinks = config?.data?.socialLinks
+    ? Object.entries(config.data.socialLinks).map(([platform, url]) => {
+        const Icon = socialIcons[platform as keyof typeof socialIcons];
+        const color = socialColors[platform as keyof typeof socialColors];
+        return {
+          icon: Icon,
+          href: url,
+          label: platform.charAt(0).toUpperCase() + platform.slice(1),
+          color: color || "hover:text-gray-400",
+        };
+      })
+    : [];
+
+  // Generate contact info from config
+  const contactInfo = [];
+  if (config?.data?.contactInfo?.email) {
+    contactInfo.push({
+      icon: Mail,
+      text: config.data.contactInfo.email,
+      href: `mailto:${config.data.contactInfo.email}`,
+    });
+  }
+  if (config?.data?.contactInfo?.phone) {
+    contactInfo.push({
+      icon: Phone,
+      text: config.data.contactInfo.phone,
+      href: `tel:${config.data.contactInfo.phone}`,
+    });
+  }
+  if (config?.data?.contactInfo?.address) {
+    contactInfo.push({
+      icon: MapPin,
+      text: config.data.contactInfo.address,
+      href: "#location",
+    });
+  }
+
+  // Fallback contact info if no config data
+  if (contactInfo.length === 0) {
+    contactInfo.push(
+      {
+        icon: Mail,
+        text: "src@knutsford.edu.gh",
+        href: "mailto:src@knutsford.edu.gh",
+      },
+      { icon: Phone, text: "+233 XX XXX XXXX", href: "tel:+233XXXXXXXX" },
+      {
+        icon: MapPin,
+        text: "Main Campus, Knutsford University",
+        href: "#location",
+      }
+    );
+  }
+
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-orange-900 text-white relative overflow-hidden">
       {/* Animated background elements */}
@@ -102,15 +149,15 @@ export default function Footer() {
               >
                 <div className="flex items-center space-x-3 mb-4">
                   <Image
-                    src="/manifest/android-chrome-512x512.png"
-                    alt="Knutsford University Logo"
+                    src={config?.data?.appLogo || "/manifest/android-chrome-512x512.png"}
+                    alt={config?.data?.appName || "Knutsford University Logo"}
                     width={50}
                     height={50}
                     className=""
                   />
                   <div>
                     <h3 className="text-2xl font-bold">
-                      Knutsford University SRC
+                      {config?.data?.appName || "Knutsford University SRC"}
                     </h3>
                     <p className="text-blue-200">
                       Student Representative Council
@@ -118,9 +165,8 @@ export default function Footer() {
                   </div>
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-6">
-                  Your voice matters. Together we make a difference. Empowering
-                  students, building community, and creating positive change on
-                  campus.
+                  {config?.data?.appDescription ||
+                    "Your voice matters. Together we make a difference. Empowering students, building community, and creating positive change on campus."}
                 </p>
               </motion.div>
 

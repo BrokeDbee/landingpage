@@ -5,6 +5,7 @@ import "./globals.css";
 import Navigation from "@/components/layout/navigation";
 import Footer from "@/components/layout/footer";
 import { Toaster } from "sonner";
+import QueryProvider from "@/providers/query-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,9 @@ export default function RootLayout({
         <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
           <Navigation />
           <div className="mt-20 min-h-[calc(80vh)]">{children}</div>
-          <Footer />
+          <QueryProvider>
+            <Footer />
+          </QueryProvider>
           <Toaster />
         </main>
         <Analytics />
