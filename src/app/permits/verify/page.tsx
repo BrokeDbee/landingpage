@@ -74,7 +74,7 @@ export default function VerifyPage() {
       alert("Unable to generate PDF. Please try again.");
       return;
     }
-    const verificationUrl = `${window.location.origin}/verify?code=${result.permit?.originalCode}`;
+    const verificationUrl = `${window.location.origin}/permits/verify?code=${result.permit?.originalCode}`;
     const qrCode = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
       verificationUrl
     )}&size=200x200`;
