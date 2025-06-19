@@ -71,7 +71,7 @@ export default function HeroSection() {
                     className="px-8 py-4 text-lg font-semibold text-white bg-red-500 rounded-full shadow-lg hover:bg-red-600"
                     asChild
                   >
-                    <Link href="/services/permit">Get Permit</Link>
+                    <Link href="/services/permits/request">Get Permit</Link>
                   </Button>
                 </motion.div>
 

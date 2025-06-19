@@ -1,11 +1,51 @@
 "use server";
 import { api } from "@/lib/api/config";
 import { PermitResponse, ServiceResponse } from "@/lib/types/common";
-import { Student } from "@prisma/client";
+import { Permit, Student } from "@prisma/client";
+
+export interface StudentStatus {
+    hasActivePermit: boolean;
+    permit?: {
+        originalCode: string;
+        expiryDate: string;
+        issueDate: string;
+        permitNumber: string;
+        semester: string;
+    };
+    validity?: {
+        daysRemaining: number;
+        status: string;
+        permit: Permit & {
+            student: Student;
+            issuedBy: {
+                username: string;
+            } | null;
+        }
+    };
+    message?: string;
+}
+
+export interface PermitStatus {
+    valid: boolean;
+    permit?: Permit & {
+        student: {
+            name: string;
+            studentId: string;
+            course: string;
+            level: string;
+        };
+        expiryDate: string;
+        issueDate: string;
+        permitNumber: string;
+        semester: string;
+        academicYear: string;
+        status: string;
+    };
+    reason?: string;
+}
 
 
-
-// create student 
+// create student
 export const createStudent = async (data: Partial<Student>): Promise<ServiceResponse<Student>> => {
     try {
         const response = await api.post("/api/students", data);
@@ -37,7 +77,7 @@ export const getPermit = async (permitCode: string): Promise<PermitResponse> => 
     }
 }
 
-export const checkStudentStatus = async (studentId: string): Promise<any> => {
+export const checkStudentStatus = async (studentId: string): Promise<ServiceResponse<StudentStatus>> => {
     try {
         const response = await api.get(`/api/permits/status?studentId=${studentId}`)
         return response.data
@@ -47,7 +87,7 @@ export const checkStudentStatus = async (studentId: string): Promise<any> => {
     }
 }
 
-export const checkPermitStatus = async (permitCode: string): Promise<any> => {
+export const checkPermitStatus = async (permitCode: string): Promise<ServiceResponse<PermitStatus>> => {
     try {
         const response = await api.get(`/api/permits/status?code=${permitCode}`)
         return response.data

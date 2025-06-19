@@ -37,13 +37,7 @@ const Courses = [
   "BSc. Pharmacy",
 ];
 
-const Levels = [
-  "Level 100",
-  "Level 200",
-  "Level 300",
-  "Level 400",
-  "Level 500",
-];
+const Levels = ["Level 100", "Level 200", "Level 300", "Level 400"];
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { Student } from "@prisma/client";
@@ -193,7 +187,7 @@ export function StudentInfoForm({
                     <FormLabel>Course</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a course" />
                         </SelectTrigger>
                       </FormControl>
@@ -220,7 +214,7 @@ export function StudentInfoForm({
                     <FormLabel>Level</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a level" />
                         </SelectTrigger>
                       </FormControl>

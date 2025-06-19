@@ -48,8 +48,6 @@ export default function Footer() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  console.log(config);
-
   // Generate social links from config
   const socialLinks = config?.data?.contactInfo?.socialLinks
     ? Object.entries(config.data?.contactInfo.socialLinks).map(

@@ -205,7 +205,7 @@ export function PaymentForm({
         <motion.div
           whileHover={{ scale: 1.1, rotate: 360 }}
           transition={{ duration: 0.6 }}
-          className="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-500 to-pink-500"
+          className="flex flex-col items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-500 to-pink-500"
         >
           <DollarSign className="w-10 h-10 text-white" />
         </motion.div>

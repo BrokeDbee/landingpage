@@ -28,41 +28,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   checkPermitStatus,
   checkStudentStatus,
+  PermitStatus,
+  StudentStatus,
 } from "@/lib/api/services/student";
-
-interface PermitStatus {
-  valid: boolean;
-  permit?: {
-    student: {
-      name: string;
-      studentId: string;
-      course: string;
-      level: string;
-    };
-    expiryDate: string;
-    issueDate: string;
-    permitNumber: string;
-    semester: string;
-    academicYear: string;
-  };
-  reason?: string;
-}
-
-interface StudentStatus {
-  hasActivePermit: boolean;
-  permit?: {
-    originalCode: string;
-    expiryDate: string;
-    issueDate: string;
-    permitNumber: string;
-    semester: string;
-  };
-  validity?: {
-    daysRemaining: number;
-    status: string;
-  };
-  message?: string;
-}
 
 export default function PermitStatusPage() {
   const [activeTab, setActiveTab] = useState("permit");
