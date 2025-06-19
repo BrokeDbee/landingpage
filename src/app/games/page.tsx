@@ -110,16 +110,6 @@ const games = [
   },
 ];
 
-const categories = [
-  "All",
-  "Memory",
-  "Logic",
-  "Speed",
-  "Math",
-  "Language",
-  "Attention",
-];
-
 export default function GamesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -137,24 +127,6 @@ export default function GamesPage() {
             Choose from our collection of brain training games. Each game
             targets different cognitive skills.
           </p>
-        </motion.div>
-
-        {/* Category Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-2 mb-12"
-        >
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={category === "All" ? "default" : "outline"}
-              className="px-6 py-2"
-            >
-              {category}
-            </Button>
-          ))}
         </motion.div>
 
         {/* Games Grid */}
