@@ -36,30 +36,13 @@ export function PaymentForm({
   setIsLoading,
   formData,
   paymentStatus,
-  isLoading,
 }: PaymentFormProps) {
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const paymentMethods = [
-    {
-      id: "mobile_money",
-      name: "Mobile Money",
-      icon: "📱",
-      desc: "MTN, Vodafone, AirtelTigo",
-    },
-    {
-      id: "card",
-      name: "Card Payment",
-      icon: "💳",
-      desc: "Visa, Mastercard",
-    },
-  ];
 
-  const handlePayment = async (methodId: string) => {
+  const handlePayment = async () => {
     // Clear previous errors
     setPaymentError(null);
-    setSelectedMethod(methodId);
     setIsLoading(true);
     setPaymentStatus("pending");
 
@@ -84,7 +67,7 @@ export function PaymentForm({
         currency: "GHS",
         metadata: {
           permitType: "exam",
-          paymentMethod: methodId,
+          paymentMethod: "mobile_money",
           timestamp: new Date().toISOString(),
         },
       };
@@ -140,7 +123,6 @@ export function PaymentForm({
       setRetryCount((prev) => prev + 1);
     } finally {
       setIsLoading(false);
-      setSelectedMethod(null);
     }
   };
 
@@ -201,7 +183,7 @@ export function PaymentForm({
       className="space-y-6"
     >
       {/* Header */}
-      <div className="mb-8 text-center flex flex-wrap items-center justify-center">
+      <div className="mb-8 text-center flex flex-col items-center justify-center">
         <motion.div
           whileHover={{ scale: 1.1, rotate: 360 }}
           transition={{ duration: 0.6 }}
@@ -313,50 +295,16 @@ export function PaymentForm({
               <h4 className="mb-6 text-lg font-semibold text-gray-800">
                 Choose Payment Method
               </h4>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {paymentMethods.map((method) => (
-                  <motion.button
-                    key={method.id}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handlePayment(method.id)}
-                    disabled={isLoading}
-                    className={`p-6 transition-all duration-300 border-2 rounded-xl group relative
-                      ${
-                        isLoading
-                          ? "border-gray-200 bg-gray-50 cursor-not-allowed opacity-60"
-                          : "border-gray-200 hover:border-blue-400 hover:bg-blue-50"
-                      }
-                      ${
-                        selectedMethod === method.id && isLoading
-                          ? "border-blue-400 bg-blue-50"
-                          : ""
-                      }`}
-                  >
-                    {/* Loading Indicator */}
-                    {selectedMethod === method.id && isLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl">
-                        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                      </div>
-                    )}
-
-                    <div className="text-center">
-                      <div className="mb-3 text-3xl">{method.icon}</div>
-                      <div
-                        className={`font-semibold transition-colors ${
-                          isLoading
-                            ? "text-gray-500"
-                            : "text-gray-800 group-hover:text-blue-600"
-                        }`}
-                      >
-                        {method.name}
-                      </div>
-                      <div className="mt-1 text-sm text-gray-500">
-                        {method.desc}
-                      </div>
-                    </div>
-                  </motion.button>
-                ))}
+              <div className="flex items-center gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePayment}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  Pay Now
+                </motion.button>
               </div>
             </div>
 
