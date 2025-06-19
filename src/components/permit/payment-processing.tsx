@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -21,6 +23,8 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { verifyPayment } from "@/lib/api/services/payment";
 import { PermitResponse } from "@/lib/types/common";
+import { useQuery } from "@tanstack/react-query";
+import { getPublicConfig } from "@/lib/api/services/config";
 
 interface PaymentProcessingProps {
   isLoading: boolean;
@@ -52,6 +56,12 @@ export function PaymentProcessing({
   const permitCode = searchParams.get("permitCode");
   const router = useRouter();
   const permitRef = useRef<HTMLDivElement>(null);
+
+  const { data: config } = useQuery({
+    queryKey: ["public-config"],
+    queryFn: getPublicConfig,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   const [verificationError, setVerificationError] =
     useState<VerificationError | null>(null);
@@ -201,7 +211,7 @@ export function PaymentProcessing({
           <div class="header">
             <h1>Student Representative Council</h1>
             <h2>Official Exam Permit</h2>
-            <p>Academic Year 2023/2024</p>
+            <p>Academic Year ${config?.data?.semesterConfig?.academicYear}</p>
           </div>
           
           <div class="details-grid">
@@ -687,7 +697,7 @@ export function PaymentProcessing({
                 Official Exam Permit
               </h2>
               <p className="text-sm text-gray-500 font-medium">
-                Academic Year 2023/2024
+                Academic Year {config?.data?.semesterConfig?.academicYear}
               </p>
             </div>
 

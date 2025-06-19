@@ -22,54 +22,76 @@ export default function AboutPage() {
   const values = [
     {
       icon: Shield,
+      title: "Student-Centeredness",
+      description: "Always putting student needs, welfare, and voice first.",
+    },
+    {
+      icon: Target,
       title: "Integrity",
       description:
-        "We uphold the highest standards of honesty and ethical behavior in all our actions.",
+        " Upholding transparency, accountability, and ethical conduct.",
     },
     {
       icon: Users,
       title: "Inclusivity",
       description:
-        "We ensure every student's voice is heard and represented regardless of background.",
+        "Celebrating diversity and ensuring every student feels represented.",
+    },
+
+    {
+      icon: Heart,
+      title: "Collaboration",
+      description:
+        "Building strong partnerships with university stakeholders and student organizations.",
     },
     {
       icon: Lightbulb,
-      title: "Innovation",
-      description:
-        "We embrace new ideas and creative solutions to address student needs.",
-    },
-    {
-      icon: Heart,
-      title: "Service",
-      description:
-        "We are committed to serving the student body with dedication and compassion.",
+      title: "Empowerment",
+      description: "Encouraging student leadership and personal growth.",
     },
   ];
-
   const timeline = [
     {
-      year: "2008",
+      year: "2007",
       title: "Foundation",
       description:
-        "SRC was established to represent student interests and concerns.",
+        "Knutsford University College was launched in East Legon, Accra—established to deliver high-quality, affordable higher education in Ghana.",
     },
     {
-      year: "2015",
-      title: "Digital Transformation",
+      year: "2010–2015",
+      title: "Campus Expansion",
       description:
-        "Launched online platforms for better student engagement and communication.",
+        "A Kumasi campus was opened to accommodate growing demand from students in the Ashanti region.",
     },
     {
-      year: "2020",
-      title: "Expanded Services",
+      year: "2012",
+      title: "Formation",
       description:
-        "Introduced comprehensive permit system and enhanced student support services.",
+        "Formation of the SRC as an elected body to foster student representation and participation in governance.",
     },
     {
-      year: "2024",
-      title: "Future Forward",
+      year: "2015–2019",
+      title: "Expanded Reach",
       description:
-        "Continuing to innovate and serve students with modern solutions and approaches.",
+        "The SRC expanded its reach by launching campus-wide events: academic symposia, cultural fests, community outreach, and recreational tours, in partnership with the Office of Student Services.",
+    },
+    {
+      year: "2020–2021",
+      title: "Hybrid Engagement",
+      description:
+        "Despite pandemic-related challenges, the SRC adapted to hybrid student engagement—facilitating online forums, virtual events, and wellness initiatives.",
+    },
+    {
+      year: "2022",
+      title: "Environmental Campaign",
+      description:
+        "SRC-led environmental and sanitation campaigns earned university-wide praise, contributing to Knutsford’s recognition at the Ghana Environmental & Sanitation Awards.",
+    },
+    {
+      year: "2025",
+      title: "SRC Week",
+      description:
+        "SRC Week has become a hallmark of the academic calendar—featuring student showcases, competitions, forums, and social events across both Accra and Kumasi campuses.",
     },
   ];
 
@@ -88,9 +110,12 @@ export default function AboutPage() {
               About KNUST SRC
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto">
-              Empowering students, building community, and creating positive
-              change on campus through dedicated leadership and innovative
-              solutions.
+              The Knutsford University Student Representative Council (SRC) is
+              the official voice of the student body at Knutsford University,
+              championing student interests and driving campus life. Through
+              collaboration with university leadership, faculty, and student
+              organizations, the SRC is committed to enhancing the academic,
+              cultural, and social experience of every student.
             </p>
           </motion.div>
         </div>
@@ -110,10 +135,12 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-800">Our Mission</h2>
             </div>
             <p className="text-lg text-gray-600 leading-relaxed">
-              To serve as the primary voice of the student body, advocating for
-              their rights, interests, and welfare while fostering a vibrant,
-              inclusive, and supportive campus community that promotes academic
-              excellence and personal growth.
+              • To represent and advocate for student welfare, rights, and
+              interests within the university framework.
+              <br />• To facilitate vibrant student engagement by supporting
+              clubs, events, and educational initiatives.
+              <br />• To foster leadership, civic responsibility, and community
+              involvement among the student body.
             </p>
           </motion.div>
 
@@ -128,10 +155,9 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-800">Our Vision</h2>
             </div>
             <p className="text-lg text-gray-600 leading-relaxed">
-              To be the leading student representative body that creates an
-              environment where every student can thrive academically, socially,
-              and personally, while building a legacy of excellence and positive
-              impact for future generations.
+              To cultivate an empowered, inclusive, and dynamic student
+              community—where every Knutsford University student is inspired to
+              lead, innovate, and positively impact Ghana and beyond.
             </p>
           </motion.div>
         </div>
@@ -247,30 +273,40 @@ export default function AboutPage() {
           transition={{ duration: 0.6, delay: 1.8 }}
           className="bg-white p-8 rounded-lg shadow-lg"
         >
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Who We Are</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            Looking Ahead
+          </h2>
           <div className="prose prose-lg text-gray-600 max-w-none">
             <p className="mb-6">
-              The Student Representative Council (SRC) is the official student
-              government body that represents the interests and concerns of all
-              students at Knutsford University. We serve as the bridge between
-              students and the university administration, ensuring that student
-              voices are heard and their needs are addressed.
+              In the coming years, the Knutsford University SRC will continue
+              to:
             </p>
             <p className="mb-6">
-              Our organization is committed to fostering a positive campus
-              environment where students can thrive academically, socially, and
-              personally. We organize events, provide support services, and
-              advocate for policies that benefit the entire student community.
+              • Amplify student voices in policy and campus decision-making.
+            </p>
+            <p className="mb-6">
+              • Enhance support systems for student wellness, academic success,
+              and career readiness.
             </p>
             <p>
-              Through our dedicated team of elected representatives and
-              appointed officials, we work tirelessly to improve student life,
-              enhance campus facilities, and create opportunities for personal
-              and professional development. Our commitment to excellence and
-              student welfare drives everything we do.
+              • Grow community outreach, entrepreneurial incubation, and
+              leadership development programs.
+            </p>
+            <p>
+              {" "}
+              • Foster a unified university culture across campuses—promoting
+              inclusion, innovation, and student excellence.
             </p>
           </div>
         </motion.div>
+
+        <div className="mt-8">
+          <p>
+            Join us in shaping a campus community that represents, empowers, and
+            celebrates every Knutsford University student—today, and for
+            generations to come.
+          </p>
+        </div>
       </div>
     </div>
   );

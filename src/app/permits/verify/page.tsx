@@ -26,11 +26,19 @@ import Link from "next/link";
 import { checkPermitStatus, PermitStatus } from "@/lib/api/services/student";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useQuery } from "@tanstack/react-query";
+import { getPublicConfig } from "@/lib/api/services/config";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const [result, setResult] = useState<PermitStatus | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const { data: config } = useQuery({
+    queryKey: ["public-config"],
+    queryFn: getPublicConfig,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   useEffect(() => {
     const verifyPermit = async () => {
@@ -189,7 +197,7 @@ export default function VerifyPage() {
           <div class="header">
             <h1>Student Representative Council</h1>
             <h2>Official Exam Permit</h2>
-            <p>Academic Year 2023/2024</p>
+            <p>Academic Year ${config?.data?.semesterConfig?.academicYear}</p>
           </div>
           
           <div class="details-grid">

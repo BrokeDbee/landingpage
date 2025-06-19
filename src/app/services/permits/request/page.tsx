@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Student } from "@prisma/client";
+import QueryProvider from "@/providers/query-provider";
 
 export default function PermitRequestPage() {
   const [studentIdInput, setStudentIdInput] = useState("");
@@ -97,13 +98,15 @@ export default function PermitRequestPage() {
         );
       case 4:
         return (
-          <PaymentProcessing
-            isLoading={isLoading}
-            paymentStatus={paymentStatus}
-            setPaymentStatus={setPaymentStatus}
-            setStep={setStep}
-            handleSubmit={() => {}}
-          />
+          <QueryProvider>
+            <PaymentProcessing
+              isLoading={isLoading}
+              paymentStatus={paymentStatus}
+              setPaymentStatus={setPaymentStatus}
+              setStep={setStep}
+              handleSubmit={() => {}}
+            />
+          </QueryProvider>
         );
       default:
         return null;
