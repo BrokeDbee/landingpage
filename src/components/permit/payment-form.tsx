@@ -36,6 +36,7 @@ export function PaymentForm({
   setIsLoading,
   formData,
   paymentStatus,
+  isLoading,
 }: PaymentFormProps) {
   const [paymentError, setPaymentError] = useState<PaymentError | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -290,17 +291,14 @@ export function PaymentForm({
               </span>
             </div>
 
-            {/* Payment Methods */}
             <div className="pt-6 border-t">
-              <h4 className="mb-6 text-lg font-semibold text-gray-800">
-                Choose Payment Method
-              </h4>
               <div className="flex items-center gap-4">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handlePayment}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
                 >
                   <CreditCard className="w-4 h-4" />
                   Pay Now
