@@ -184,15 +184,35 @@ export default function ReactionGamePage() {
           {!playerName && (
             <div className="p-6 mb-8 bg-white rounded-2xl shadow-lg">
               <h3 className="mb-4 text-xl font-semibold text-center">
-                Enter Your Name
+                Enter Your Name to Start
               </h3>
               <Input
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                placeholder="Your name"
-                className="mb-4 text-center"
+                placeholder="Enter your name to start playing"
+                className="py-3 mb-4 text-lg text-center"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && playerName.trim()) {
+                    // Auto-start game when Enter is pressed
+                  }
+                }}
               />
+              {playerName.trim() && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => startGame()}
+                  className="px-8 py-3 text-lg text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700"
+                >
+                  🎮 Start Playing!
+                </motion.button>
+              )}
+              {!playerName.trim() && (
+                <p className="text-sm text-gray-500">
+                  Please enter your name to start playing!
+                </p>
+              )}
             </div>
           )}
 

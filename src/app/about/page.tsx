@@ -1,24 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Target,
-  Award,
-  Heart,
-  Shield,
-  Lightbulb,
-  Calendar,
-  Users,
-} from "lucide-react";
+import { Target, Award, Heart, Shield, Lightbulb, Users } from "lucide-react";
 
 export default function AboutPage() {
-  const stats = [
-    { icon: Users, value: "5000+", label: "Students Represented" },
-    { icon: Calendar, value: "50+", label: "Events Organized" },
-    { icon: Award, value: "15+", label: "Years of Service" },
-    { icon: Heart, value: "100%", label: "Student Focused" },
-  ];
-
   const values = [
     {
       icon: Shield,
@@ -87,12 +72,6 @@ export default function AboutPage() {
       description:
         "SRC-led environmental and sanitation campaigns earned university-wide praise, contributing to Knutsford’s recognition at the Ghana Environmental & Sanitation Awards.",
     },
-    {
-      year: "2025",
-      title: "SRC Week",
-      description:
-        "SRC Week has become a hallmark of the academic calendar—featuring student showcases, competitions, forums, and social events across both Accra and Kumasi campuses.",
-    },
   ];
 
   return (
@@ -107,7 +86,7 @@ export default function AboutPage() {
             className="text-center"
           >
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              About KNUST SRC
+              About Knutsford University SRC
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 max-w-4xl mx-auto">
               The Knutsford University Student Representative Council (SRC) is
@@ -161,30 +140,6 @@ export default function AboutPage() {
             </p>
           </motion.div>
         </div>
-
-        {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16"
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-              className="text-center bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            >
-              <stat.icon className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <div className="text-3xl font-bold text-gray-800 mb-2">
-                {stat.value}
-              </div>
-              <div className="text-gray-600">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
 
         {/* Values Section */}
         <motion.div

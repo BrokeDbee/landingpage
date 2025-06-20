@@ -10,8 +10,6 @@ import {
   Star,
   Crown,
   Zap,
-  Eye,
-  Undo,
   Volume2,
   VolumeX,
   Home,
@@ -20,7 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import type { JSX } from "react";
 
 type Difficulty = "easy" | "medium" | "hard";
 type LeaderboardEntry = {
@@ -30,15 +27,6 @@ type LeaderboardEntry = {
   difficulty: Difficulty;
   date: string;
   score?: number;
-};
-
-type PowerUp = {
-  id: string;
-  name: string;
-  icon: JSX.Element;
-  description: string;
-  cost: number;
-  used: boolean;
 };
 
 const cards = [
@@ -66,33 +54,6 @@ const DIFFICULTY_SETTINGS = {
   hard: { pairs: 12, timeLimit: 240 },
 };
 
-const POWER_UPS: PowerUp[] = [
-  {
-    id: "peek",
-    name: "Peek",
-    icon: <Eye className="text-blue-500" />,
-    description: "Reveal all cards for 2 seconds",
-    cost: 30,
-    used: false,
-  },
-  {
-    id: "undo",
-    name: "Undo",
-    icon: <Undo className="text-green-500" />,
-    description: "Undo your last move",
-    cost: 20,
-    used: false,
-  },
-  {
-    id: "freeze",
-    name: "Freeze Time",
-    icon: <Zap className="text-yellow-500" />,
-    description: "Freeze the timer for 10 seconds",
-    cost: 25,
-    used: false,
-  },
-];
-
 export default function MemoryGamePage() {
   const [gameCards, setGameCards] = useState<typeof cards>([]);
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
@@ -106,30 +67,8 @@ export default function MemoryGamePage() {
   const [playerName, setPlayerName] = useState("");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [score, setScore] = useState(100);
-  const [powerUps, setPowerUps] = useState(POWER_UPS);
   const [isTimeFrozen, setIsTimeFrozen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-
-  const handlePowerUp = (powerUp: PowerUp) => {
-    if (score < powerUp.cost || powerUp.used) return;
-
-    setScore((prev) => prev - powerUp.cost);
-    setPowerUps((prev) =>
-      prev.map((p) => (p.id === powerUp.id ? { ...p, used: true } : p))
-    );
-
-    switch (powerUp.id) {
-      case "peek":
-        const allCards = gameCards.map((_, i) => i);
-        setFlippedCards(allCards);
-        setTimeout(() => setFlippedCards([]), 2000);
-        break;
-      case "freeze":
-        setIsTimeFrozen(true);
-        setTimeout(() => setIsTimeFrozen(false), 10000);
-        break;
-    }
-  };
 
   useEffect(() => {
     const savedLeaderboard = localStorage.getItem("memoryGameLeaderboard");
@@ -137,6 +76,16 @@ export default function MemoryGamePage() {
       setLeaderboard(JSON.parse(savedLeaderboard));
     }
   }, []);
+
+  useEffect(() => {
+    shuffleCards();
+  }, [difficulty]);
+
+  useEffect(() => {
+    if (gameStarted && !isPlaying) {
+      setIsPlaying(true);
+    }
+  }, [gameStarted, isPlaying]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -168,7 +117,6 @@ export default function MemoryGamePage() {
     setIsPlaying(true);
     setGameStarted(false);
     setScore(100);
-    setPowerUps(POWER_UPS.map((p) => ({ ...p, used: false })));
     setIsTimeFrozen(false);
   };
 
@@ -219,10 +167,6 @@ export default function MemoryGamePage() {
   };
 
   const handleCardClick = (index: number) => {
-    if (!playerName.trim()) {
-      alert("Please enter your name before playing!");
-      return;
-    }
     if (
       flippedCards.length === 2 ||
       flippedCards.includes(index) ||
@@ -450,61 +394,36 @@ export default function MemoryGamePage() {
               className="mb-8 text-center"
             >
               <div className="max-w-md mx-auto">
+                <h3 className="mb-4 text-xl font-semibold text-gray-700">
+                  Enter Your Name to Start
+                </h3>
                 <Input
                   type="text"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
                   placeholder="Enter your name to start playing"
                   className="py-3 mb-4 text-lg text-center"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && playerName.trim()) {
+                      setGameStarted(true);
+                    }
+                  }}
                 />
+                {playerName.trim() && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setGameStarted(true)}
+                    className="px-8 py-3 text-lg text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-700 hover:to-orange-700"
+                  >
+                    🎮 Start Playing!
+                  </motion.button>
+                )}
                 {!playerName.trim() && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-gray-500">
                     Please enter your name to start playing!
                   </p>
                 )}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Power-ups */}
-          {gameStarted && !gameComplete && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <h3 className="mb-4 text-lg font-semibold text-center">
-                Power-ups
-              </h3>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {powerUps.map((powerUp) => {
-                  const isDisabled = score < powerUp.cost || powerUp.used;
-                  return (
-                    <motion.button
-                      key={powerUp.id}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handlePowerUp(powerUp)}
-                      disabled={isDisabled}
-                      className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${
-                        !isDisabled
-                          ? "bg-blue-50 border-blue-200 hover:bg-blue-100 cursor-pointer"
-                          : "bg-gray-50 border-gray-200 opacity-50 cursor-not-allowed"
-                      }`}
-                    >
-                      <div className="text-2xl">{powerUp.icon}</div>
-                      <div className="flex-1 text-left">
-                        <div className="font-semibold">{powerUp.name}</div>
-                        <div className="text-sm text-gray-600">
-                          {powerUp.description}
-                        </div>
-                      </div>
-                      <div className="text-lg font-bold text-blue-600">
-                        {powerUp.cost}
-                      </div>
-                    </motion.button>
-                  );
-                })}
               </div>
             </motion.div>
           )}
@@ -517,7 +436,7 @@ export default function MemoryGamePage() {
                 : difficulty === "medium"
                 ? "grid-cols-4"
                 : "grid-cols-6"
-            } ${!playerName.trim() ? "opacity-50 pointer-events-none" : ""}`}
+            } ${!gameStarted ? "opacity-50 pointer-events-none" : ""}`}
           >
             {gameCards.map((card, index) => (
               <motion.div
